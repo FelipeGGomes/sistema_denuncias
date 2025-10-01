@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Denúncias Anônimas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --light: #ecf0f1;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --gray: #95a5a6;
+            --dark: #34495e;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .logo h1 {
+            color: var(--secondary);
+            font-size: 24px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--dark);
+        }
+
+        .btn-light {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-light:hover {
+            background-color: #dde4e6;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-header i {
+            font-size: 28px;
+            color: var(--primary);
+            background-color: rgba(52, 152, 219, 0.1);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-header h2 {
+            color: var(--secondary);
+            font-size: 22px;
+        }
+
+        .card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            gap: 20px;
+        }
+
+        .feature {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            flex: 1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .feature-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .example {
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .required::after {
+            content: " *";
+            color: var(--danger);
+        }
+
+        .submit-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .login-form {
+            display: none;
+        }
+
+        .track-form {
+            display: none;
+        }
+
+        .active-form {
+            display: block;
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .stat {
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                flex-direction: column;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Denúncias Anônimas</h1>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-light">
+                    <i class="fas fa-user-cog"></i> Área do Técnico
+                </button>
+            </div>
+        </header>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-number">1</div>
+                <div class="feature-title">Anônimo</div>
+                <div class="feature-description">Sua identidade é protegida</div>
+            </div>
+            <div class="feature">
+                <div class="feature-number">2</div>
+                <div class="feature-title">Protocolo</div>
+                <div class="feature-description">Acompanhe sua denúncia</div>
+            </div>
+            <div class="feature">
+                <div class="feature-number">3</div>
+                <div class="feature-title">Resultado</div>
+                <div class="feature-description">Veja o andamento</div>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="card track-form" id="track-form">
+            <div class="card-header">
+                <i class="fas fa-search"></i>
+                <h2>Acompanhar Denúncia</h2>
+            </div>
+            <p>Informe o número do protocolo para acompanhar o andamento da sua denúncia</p>
+
+            <form id="acompanhar-form">
+                <div class="form-group">
+                    <label for="protocolo" class="required">Número do Protocolo</label>
+                    <input type="text" id="protocolo" placeholder="Ex: DEN-2023-12345" required>
+                    <p class="example">O número do protocolo foi enviado para você após o registro da denúncia</p>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-search"></i> Consultar Denúncia
+                </button>
+            </form>
+
+            <div id="status-denuncia"
+                style="display: none; margin-top: 20px; padding: 15px; border-radius: 5px; background-color: #f8f9fa;">
+                <h3>Status da Denúncia</h3>
+                <p><strong>Protocolo:</strong> <span id="protocolo-number"></span></p>
+                <p><strong>Situação:</strong> <span id="situacao"></span></p>
+                <p><strong>Última Atualização:</strong> <span id="atualizacao"></span></p>
+            </div>
+        </div>
+
+        <div class="card login-form" id="login-form">
+            <div class="card-header">
+                <i class="fas fa-user-cog"></i>
+                <h2>Área do Técnico</h2>
+            </div>
+            <p>Faça login para acessar o sistema de gerenciamento de denúncias</p>
+
+            <form id="login-tech-form">
+                <div class="form-group">
+                    <label for="usuario" class="required">Usuário</label>
+                    <input type="text" id="usuario" placeholder="Seu usuário" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="senha" class="required">Senha</label>
+                    <input type="password" id="senha" placeholder="Sua senha" required>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-info-circle"></i>
+                <h2>Como Funciona</h2>
+            </div>
+            <p>Nosso sistema permite que você reporte problemas na sua comunidade de forma totalmente anônima e segura.
+            </p>
+
+            <ul style="margin-left: 20px; margin-top: 15px; color: var(--gray);">
+                <li style="margin-bottom: 10px;">Registre a denúncia com detalhes e localização</li>
+                <li style="margin-bottom: 10px;">Receba um número de protocolo para acompanhamento</li>
+                <li style="margin-bottom: 10px;">A equipe técnica analisa e toma as providências</li>
+                <li style="margin-bottom: 10px;">Você pode acompanhar o status usando seu protocolo</li>
+            </ul>
+
+            <br>
+
+
+            <div class="card-header" style="display: flex; justify-content: center; gap: 10px; padding: 10px;">
+                <a href="{% url 'denuncias:denuncia-create' %}" class="btn btn-primary" style=" text-decoration: none">
+                    <i class="fas fa-plus-circle"></i> Registrar Denúncia
+                </a>
+                
+                <a href="{% url 'denuncias:denuncia-search' %}" class="btn btn-secondary" style=" text-decoration: none">
+                    <i class="fas fa-search"></i> Acompanhar Denúncia
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Sistema de Denúncias Anônimas &copy; 2023 - Todos os direitos reservados</p>
+        </footer>
+
+        <script>
+            function showForm(formType) {
+                // Esconder todos os formulários
+                document.querySelectorAll('.card').forEach(card => {
+                    card.classList.remove('active-form');
+                });
+
+                // Mostrar o formulário selecionado
+                document.getElementById(`${formType}-form`).classList.add('active-form');
+            }
+
+            // Manipular envio do formulário de denúncia
+            document.getElementById('denuncia-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                alert('Denúncia registrada com sucesso! Seu protocolo é: DEN-' + new Date().getFullYear() + '-' + Math.floor(10000 + Math.random() * 90000));
+                this.reset();
+            });
+
+            // Manipular envio do formulário de acompanhamento
+            document.getElementById('acompanhar-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const protocolo = document.getElementById('protocolo').value;
+
+                // Simular consulta
+                document.getElementById('protocolo-number').textContent = protocolo;
+                document.getElementById('situacao').textContent = 'Em análise';
+                document.getElementById('atualizacao').textContent = new Date().toLocaleDateString('pt-BR');
+
+                document.getElementById('status-denuncia').style.display = 'block';
+            });
+
+            // Manipular envio do formulário de login
+            document.getElementById('login-tech-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                alert('Login realizado com sucesso! Redirecionando para o painel administrativo...');
+                this.reset();
+            });
+        </script>
+</body>
+
+</html>

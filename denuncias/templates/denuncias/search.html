@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocolo e Acompanhamento - Denúncias Anônimas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --light: #ecf0f1;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --gray: #95a5a6;
+            --dark: #34495e;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background: var(--light);
+        }
+
+        .back-button i {
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+
+        .card-header h2 {
+            color: var(--secondary);
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: var(--gray);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .example {
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .example i {
+            color: var(--primary);
+        }
+
+        .required::after {
+            content: " *";
+            color: var(--danger);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .privacy-notice {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .privacy-notice h4 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+        }
+
+        .privacy-notice p {
+            color: var(--gray);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 0;
+            text-align: left;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .back-button {
+                top: 20px;
+                left: 20px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .card {
+                padding: 30px 25px;
+            }
+
+            .card-header h2 {
+                font-size: 24px;
+            }
+
+            .card-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 25px 20px;
+            }
+
+            .card-header h2 {
+                font-size: 22px;
+            }
+
+            input {
+                padding: 14px;
+            }
+
+            .submit-btn {
+                padding: 14px 25px;
+            }
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .back-button {
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Botão Voltar -->
+        <button class="back-button" href="{% url 'denuncias:home' %}" title="Voltar">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+
+        <div class="main-content">
+            <!-- Tela de Acompanhamento -->
+            <div class="card track-form active-screen" id="track-form">
+                <div class="card-header">
+                    <i class="fas fa-search"></i>
+                    <h2>Acompanhar Denúncia</h2>
+                </div>
+                <p>Informe o número do protocolo para acompanhar o andamento da sua denúncia</p>
+
+                <form id="acompanhar-form" method="post" action="{% url 'denuncias:denuncia-search' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.protocolo.label_tag }}
+                        {{ form.protocolo }}
+                        {{ form.protocolo.errors }}
+                        <p class="example">O número do protocolo foi enviado para você após o registro da denúncia</p>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-search"></i> Consultar Denúncia
+                    </button>
+
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+
+    <footer>
+        <p>Sistema de Denúncias Anônimas &copy; 2023 - Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        // O nome do ID do campo "protocolo" no HTML renderizado pelo Django
+        const DJANGO_PROTOCOL_ID = 'id_protocolo';
+
+        /**
+         * Controla a exibição das diferentes seções (registrar, acompanhar, protocolo).
+         * @param {string} screenType - 'register', 'track' ou 'protocolo'
+         */
+        function showScreen(screenType) {
+            // Esconder todas as telas
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active-screen');
+            });
+
+            // Mostrar a tela selecionada
+            // Assumimos que a tela é identificada por ${screenType}-screen, por exemplo: 'track-screen'
+            const targetScreen = document.getElementById(`${screenType}-screen`);
+            if (targetScreen) {
+                targetScreen.classList.add('active-screen');
+            }
+
+            // Se for a tela de acompanhamento, resetar a consulta (limpar campos e resultados)
+            if (screenType === 'track') {
+                const statusDenuncia = document.getElementById('status-denuncia');
+                if (statusDenuncia) {
+                    statusDenuncia.style.display = 'none';
+                }
+                const acompanharForm = document.getElementById('acompanhar-form');
+                if (acompanharForm) {
+                    acompanharForm.reset();
+                }
+            }
+        }
+
+
+        // Funções de Ação (Apenas para Simulação/Feedback Visual)
+        function novaDenuncia() {
+            // Esta função deve ser substituída por um redirecionamento Django (ex: window.location.href = "{% url 'denuncias:denuncia-create' %}")
+            alert('Redirecionando para a tela de nova denúncia...');
+        }
+
+        function imprimirProtocolo() {
+            alert('Funcionalidade de impressão acionada.');
+            // window.print();
+        }
+
+        function enviarEmail() {
+            const email = prompt('Para qual email deseja enviar o protocolo?');
+            if (email) {
+                alert(`Protocolo enviado para ${email} com sucesso!`);
+            }
+        }
+
+        // Lógica de Inicialização (Verificação de Protocolo na URL)
+        window.addEventListener('load', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const protocolo = urlParams.get('protocolo');
+
+            // Se um protocolo for encontrado na URL (ex: após um redirecionamento de sucesso)
+            if (protocolo) {
+                // Mostra a tela de protocolo (se você tiver uma)
+                showScreen('protocolo');
+
+                // Atualiza o elemento que exibe o código do protocolo
+                const protocoloDisplayElement = document.querySelector('.protocolo-number') || document.getElementById('protocoloCode');
+
+                if (protocoloDisplayElement) {
+                    protocoloDisplayElement.textContent = protocolo;
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

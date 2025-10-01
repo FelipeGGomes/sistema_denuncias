@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocolo de Denúncia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <table class="container" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td colspan="2" class="header" style="text-align: center; border-bottom: 2px solid #ddd;">
+                <h1>Relatório de Protocolo de Denúncia</h1>
+                <p>Sistema de Denúncias Anônimas - Secretaria de Serviços Urbanos</p>
+                <p>Emitido em: **{{ data_emissao }}**</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="protocol-box" style="text-align: center; padding: 5px; border-bottom: 1px solid #ddd;">
+                <p style="color: #000000ff; font-weight: bold; font-size: 18px; margin-bottom: 5px;">NÚMERO DO PROTOCOLO: {{ protocolo }}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="section-title" style="text-align: center; padding: 5px; font-weight: bold; background-color: #f3f3f3; border-bottom: 1px solid #ddd;">
+                DETALHES PRINCIPAIS
+            </td>
+        </tr>
+        <tr>
+            <td class="label" style="width: 50%; padding: 8px; border-right: 1px solid #ddd; font-weight: bold;">Título:</td>
+            <td class="value" style="padding: 8px;">{{ titulo_protocolo }}</td>
+        </tr>
+        <tr>
+            <td class="label" style="padding: 8px; border-right: 1px solid #ddd; font-weight: bold;">Categoria:</td>
+            <td class="value" style="padding: 8px;">{{ categoria_nome }}</td>
+        </tr>
+        <tr>
+            <td class="label" style="padding: 8px; border-right: 1px solid #ddd; font-weight: bold;">Status Atual:</td>
+            <td class="value" style="padding: 8px;">{{ status_display }}</td>
+        </tr>
+        <tr>
+            <td class="label" style="padding: 8px; border-right: 1px solid #ddd; font-weight: bold;">Data de Registro:</td>
+            <td class="value" style="padding: 8px;">{{ data_registro }}</td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="section-title" style="text-align: center; padding: 5px; font-weight: bold; background-color: #f3f3f3; border-bottom: 1px solid #ddd;">
+                LOCALIZAÇÃO
+            </td>
+        </tr>
+        <tr>
+            <td class="label" style="width: 50%; padding: 8px; border-right: 1px solid #ddd; font-weight: bold;">Endereço (Localização):</td>
+            <td class="value" style="padding: 8px;">{{ localizacao }}</td>
+        </tr>
+        <tr>
+            <td class="label" style="padding: 8px; border-right: 1px solid #ddd; font-weight: bold;">Ponto de Referência:</td>
+            <td class="value" style="padding: 8px;">{{ denuncia.ponto_referencia|default:"Não Informado" }}</td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="section-title" style="text-align: center; padding: 5px; font-weight: bold; background-color: #f3f3f3; border-bottom: 1px solid #ddd;">
+                DESCRIÇÃO DETALHADA
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="description-box" style="padding: 10px; border-top: 1px dashed #ddd; background-color: #f5f5f5;">
+                {{ denuncia.descricao|linebreaksbr }}
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="footer" style="text-align: center; padding: 5px; font-size: 12px; color: #999; border-top: 2px solid #ddd;">
+                Este documento é válido apenas para fins de acompanhamento.
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

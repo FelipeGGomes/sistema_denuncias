@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denúncia Registrada - Sistema de Denúncias</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --success: #2ecc71;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gray: #95a5a6;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .success-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .success-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--success), #27ae60, #2ecc71);
+        }
+        
+        .success-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 50px 40px 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .success-animation {
+            width: 80px;
+            height: 80px;
+            background: var(--success);
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        
+        .success-animation::before {
+            content: '✓';
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(46, 204, 113, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+        
+        .success-header h1 {
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .success-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+        
+        .success-body {
+            padding: 40px;
+        }
+        
+        .protocolo-box {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .protocolo-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.2);
+        }
+        
+        .protocolo-code {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 3px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .btn-copy {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-copy:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+        
+        .steps-info {
+            margin: 40px 0;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .step-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+            font-size: 1.5rem;
+        }
+        
+        .step-content h5 {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .step-content p {
+            color: var(--gray);
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 40px 0 20px;
+        }
+        
+        .btn-action {
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .btn-outline-secondary {
+            border-color: var(--gray);
+            color: var(--gray);
+        }
+        
+        .btn-outline-secondary:hover {
+            background: var(--gray);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .contact-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .contact-info p {
+            margin: 0;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+         .back-button {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background: var(--light);
+        }
+
+        .back-button i {
+            font-size: 20px;
+            color: var(--primary);
+        }
+        
+        .contact-info i {
+            color: var(--primary);
+        }
+        
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-container {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .step-item:nth-child(1) { animation: fadeInUp 0.6s ease-out 0.2s both; }
+        .step-item:nth-child(2) { animation: fadeInUp 0.6s ease-out 0.4s both; }
+        .step-item:nth-child(3) { animation: fadeInUp 0.6s ease-out 0.6s both; }
+        
+        @media (max-width: 768px) {
+            .success-header {
+                padding: 40px 20px 30px;
+            }
+            
+            .success-body {
+                padding: 30px 20px;
+            }
+            
+            .protocolo-code {
+                font-size: 2rem;
+                padding: 12px;
+            }
+            
+            .step-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .step-icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .back-button {
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+    </style>
+</head>
+<body>
+
+       <button class="back-button" href="{% url 'denuncias:home' %}" title="Voltar">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+
+
+    <div class="success-container">
+        <div class="success-header">
+            <div class="success-animation"></div>
+            <h1>Denúncia Registrada com Sucesso!</h1>
+            <p>Sua contribuição é muito importante para nossa comunidade.</p>
+        </div>
+
+        <div class="success-body">
+            <p class="lead text-center mb-4" style="color: var(--secondary); font-weight: 500;">
+                Anote o seu código de protocolo para acompanhar o andamento:
+            </p>
+
+            <div class="protocolo-box">
+                <button class="btn-copy" id="btnCopy" title="Copiar protocolo">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <div class="protocolo-code" id="protocoloCode">{{ denuncia.protocolo}}</div>
+                <p class="text-muted mb-0">Este é o número único da sua denúncia.</p>
+            </div>
+
+            <div class="steps-info">
+                <h4 class="text-center mb-4" style="color: var(--secondary);">O que acontece agora?</h4>
+
+                <div class="step-item">
+                    <div class="step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="step-content">
+                        <h5>Análise da Denúncia</h5>
+                        <p>Sua denúncia será analisada por nossa equipe em até 48 horas. Verificaremos os detalhes e validaremos as informações para garantir a melhor solução.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="step-content">
+                        <h5>Encaminhamento e Ação</h5>
+                        <p>Se necessário, encaminharemos para o órgão responsável. Dependendo da complexidade, o prazo de resposta pode variar, mas mantemos você informado.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="step-content">
+                        <h5>Acompanhamento</h5>
+                        <p>Use o código de protocolo para acompanhar o status da sua denúncia a qualquer momento em nossa plataforma.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{% url 'denuncias:denuncia-create' %}" class="btn btn-primary btn-action">
+                    <i class="fas fa-plus-circle"></i>
+                    Nova Denúncia
+                </a>
+                <a href="{% url 'denuncias:home' %}" class="btn btn-outline-secondary btn-action">
+                    <i class="fas fa-home"></i>
+                    Página Inicial
+                </a>
+                <a href="{% url 'denuncias:pdf-view' protocolo=denuncia.protocolo %}" 
+                    class="btn btn-outline-success btn-action">
+                    Baixar PDF
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('btnCopy').addEventListener('click', function() {
+            const protocolo = document.getElementById('protocoloCode').textContent;
+            
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(protocolo).then(function() {
+                // Feedback visual
+                const originalIcon = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i>';
+                this.style.background = 'var(--success)';
+                
+                setTimeout(() => {
+                    this.innerHTML = originalIcon;
+                    this.style.background = '';
+                }, 2000);
+                
+            }.bind(this)).catch(function(err) {
+                console.error('Erro ao copiar: ', err);
+                alert('Não foi possível copiar o protocolo. Tente novamente.');
+            });
+        });
+
+        // Efeito de digitação no protocolo (opcional)
+        const protocoloElement = document.getElementById('protocoloCode');
+        const protocoloText = protocoloElement.textContent;
+        protocoloElement.textContent = '';
+        
+        let i = 0;
+        function typeWriter() {
+            if (i < protocoloText.length) {
+                protocoloElement.textContent += protocoloText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+        
+        // Iniciar efeito de digitação após um breve delay
+        setTimeout(typeWriter, 1000);
+    </script>
+</body>
+</html>
