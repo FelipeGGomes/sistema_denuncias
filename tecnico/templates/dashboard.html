@@ -589,113 +589,65 @@
             <div class="dashboard">
                 <!-- Card: Denúncias Não Atribuídas -->
                 <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-inbox"></i>
-                            Denúncias Não Atribuídas
-                        </div>
-                        <span class="badge badge-primary">5 novas</span>
-                    </div>
-                    
-                    <div class="filters">
-                        <select class="filter-select">
-                            <option>Todas as Categorias</option>
-                            <option>Infraestrutura</option>
-                            <option>Segurança</option>
-                            <option>Meio Ambiente</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Todas as Prioridades</option>
-                            <option>Urgente</option>
-                            <option>Alta</option>
-                            <option>Média</option>
-                            <option>Baixa</option>
-                        </select>
-                    </div>
-                    
-                    <div class="denuncia-list">
-                        <!-- Denúncia 1 -->
+    <div class="card-header">
+        <div class="card-title">
+            <i class="fas fa-inbox"></i>
+            Denúncias Não Atribuídas
+        </div>
+        <span class="badge badge-primary">{{ denuncias|length }} novas</span> 
+    </div>
 
-                        { % for denuncia in denuncias % }
-                            <div class="denuncia-item" onclick="openDenunciaModal('DEN-A7B9C3D2')">
-                                <div class="denuncia-header">
-                                    <div class="denuncia-protocolo"></div>
-                                    <div class="denuncia-prioridade prioridade-alta">ALTA</div>
-                                </div>
-                                <div class="denuncia-titulo">Buraco na Rua Principal</div>
-                                <div class="denuncia-info">
-                                    <div class="info-item">
-                                        <i class="fas fa-road"></i>
-                                        Infraestrutura
-                                    </div>
-                                    <div class="info-item">
-                                        <i class="fas fa-calendar"></i>
-                                        Há 2 horas
-                                    </div>
-                                    <div class="info-item">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        Centro
-                                    </div>
-                                    <div class="info-item">
-                                        <i class="fas fa-user"></i>
-                                        Sem contato
-                                    </div>
-                                </div>
-                                <div class="denuncia-descricao">
-                                    Buraco de aproximadamente 50cm na pista principal, representando risco para veículos...
-                                </div>
-                            {% empty %}
-                                <p>Não há denúncias novas para atribuição.</p>
-                            {% endfor %}
-                            <div class="denuncia-actions">
-                                <button class="btn btn-primary" onclick="event.stopPropagation(); aceitarDenuncia('DEN-A7B9C3D2')">
-                                    <i class="fas fa-check"></i>Aceitar
-                                </button>
-                                <button class="btn btn-outline" onclick="event.stopPropagation(); visualizarDetalhes('DEN-A7B9C3D2')">
-                                    <i class="fas fa-eye"></i>Detalhes
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Denúncia 2 -->
-                        <div class="denuncia-item" onclick="openDenunciaModal('DEN-B2C4D6E8')">
-                            <div class="denuncia-header">
-                                <div class="denuncia-protocolo">DEN-B2C4D6E8</div>
-                                <div class="denuncia-prioridade prioridade-media">MÉDIA</div>
-                            </div>
-                            <div class="denuncia-titulo">Lâmpada Queimada na Praça</div>
-                            <div class="denuncia-info">
-                                <div class="info-item">
-                                    <i class="fas fa-lightbulb"></i>
-                                    Iluminação
-                                </div>
-                                <div class="info-item">
-                                    <i class="fas fa-calendar"></i>
-                                    Há 5 horas
-                                </div>
-                                <div class="info-item">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    Jardim das Flores
-                                </div>
-                                <div class="info-item">
-                                    <i class="fas fa-user"></i>
-                                    Com contato
-                                </div>
-                            </div>
-                            <div class="denuncia-descricao">
-                                Poste de iluminação com lâmpada queimada na praça central, área escura à noite...
-                            </div>
-                            <div class="denuncia-actions">
-                                <button class="btn btn-primary" onclick="event.stopPropagation(); aceitarDenuncia('DEN-B2C4D6E8')">
-                                    <i class="fas fa-check"></i>Aceitar
-                                </button>
-                                <button class="btn btn-outline" onclick="event.stopPropagation(); visualizarDetalhes('DEN-B2C4D6E8')">
-                                    <i class="fas fa-eye"></i>Detalhes
-                                </button>
-                            </div>
-                        </div>
+    <div class="denuncia-list">
+        {% for denuncia in denuncias %}                 
+            <div class="denuncia-item" onclick="openDenunciaModal('{{ denuncia.protocolo }}')">
+                <div class="denuncia-header">
+                    <div class="denuncia-protocolo" style="font-size: 22px;">{{ denuncia.protocolo }}</div>
+                    
+                    <div class="denuncia-prioridade prioridade-{{ denuncia.prioridade|lower }}" style="font-size: 14px;">
+                        {{ denuncia.get_prioridade_display }}
                     </div>
                 </div>
+                
+                <div class="denuncia-titulo" style="font-size: 18px;">{{ denuncia.titulo }}</div> 
+                <br>
+                
+                <div class="denuncia-info">
+                    <div class="info-item">
+                        <i class="fas fa-road"></i>
+                        {{ denuncia.categoria.nome }}
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar"></i>
+                        {{ denuncia.data_criacao|date:"d/m/Y H:i" }}
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-user"></i>
+                        {{ denuncia.contato|default:"Anônimo" }}
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        {{ denuncia.dias_em_aberto }} dias em aberto
+                    </div>
+                </div>
+                
+                <div class="denuncia-descricao">
+                    {{ denuncia.descricao|truncatewords:15 }}
+                </div>
+                
+                <div class="denuncia-actions">
+                    <button class="btn btn-primary" onclick="event.stopPropagation(); aceitarDenuncia('{{ denuncia.protocolo }}')">
+                        <i class="fas fa-check"></i>Aceitar
+                    </button>
+                    <button class="btn btn-outline" onclick="event.stopPropagation(); visualizarDetalhes('{{ denuncia.protocolo }}')">
+                        <i class="fas fa-eye"></i>Detalhes
+                    </button>
+                </div>
+            </div>                        
+        {% empty %}
+            <p style="padding: 20px; text-align: center; color: var(--gray);">Nenhuma denúncia aguardando atribuição. Bom trabalho!</p>
+        {% endfor %}
+    </div>
+</div>
 
                 <!-- Card: Denúncias em Andamento -->
                 <div class="card">
