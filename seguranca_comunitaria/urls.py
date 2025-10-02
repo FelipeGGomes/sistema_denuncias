@@ -23,6 +23,6 @@ from django.urls import path, include
 urlpatterns = [
      # Inclui as URLs na raiz do site
     path('admin/', admin.site.urls),
-    path('', include('denuncias.urls')), # Inclui as URLs na raiz do site
-    path('', include('tecnico.urls')), # Inclui as URLs do app tecnico
+    path('denuncia/', include('denuncias.urls')), # Inclui as URLs na raiz do site
+    path('tecnico/', include('tecnico.urls')), # Inclui as URLs do app tecnico
 ] 

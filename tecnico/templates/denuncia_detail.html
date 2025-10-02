@@ -557,18 +557,18 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="protocolo-info">
-                            <div class="protocolo-badge">DEN-A7B9C3D2</div>
+                            <div class="protocolo-badge">{{ denuncia.protocolo }}</div>
                             <div class="status-badge status-recebida">
-                                <i class="fas fa-clock"></i> Recebida
+                                <i class="fas fa-clock"></i> {{ denuncia.get_status_display }}
                             </div>
                             <div class="priority-badge priority-alta">
-                                <i class="fas fa-exclamation-circle"></i> Prioridade Alta
+                                <i class="fas fa-exclamation-circle"></i> {{ denuncia.get_prioridade_display }}
                             </div>
                         </div>
                         <div style="text-align: right;">
                             <div style="font-size: 14px; color: var(--gray);">Registrada em</div>
                             <div style="font-size: 16px; font-weight: 600; color: var(--secondary);">
-                                15/10/2023 - 14:30
+                                {{ denuncia.data_criacao }}
                             </div>
                         </div>
                     </div>
@@ -581,11 +581,13 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Título:</span>
-                                <span class="info-value">Buraco na Rua Principal</span>
+                                <span class="info-value">{{ denuncia.titulo }} </span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Categoria:</span>
-                                <span class="info-value">Problemas de Infraestrutura</span>
+                                <span class="info-value">
+                                    {{ denuncia.categoria.nome }}
+                                </span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Responsável:</span>
