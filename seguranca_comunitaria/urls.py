@@ -24,4 +24,5 @@ urlpatterns = [
      # Inclui as URLs na raiz do site
     path('admin/', admin.site.urls),
     path('', include('denuncias.urls')), # Inclui as URLs na raiz do site
+    path('', include('tecnico.urls')), # Inclui as URLs do app tecnico
 ] 
