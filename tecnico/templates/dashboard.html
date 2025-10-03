@@ -1,751 +1,127 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Técnico - Sistema de Denúncias</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #3498db;
-            --primary-dark: #2980b9;
-            --secondary: #2c3e50;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #34495e;
-            --gray: #95a5a6;
-            --sidebar-width: 280px;
-            --sidebar-collapsed: 80px;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            color: var(--dark);
-            min-height: 100vh;
-            display: flex;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: white;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-        
-        .sidebar-header {
-            padding: 25px 20px;
-            border-bottom: 1px solid var(--light);
-            text-align: center;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-        
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-        }
-        
-        .logo-text {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--secondary);
-        }
-        
-        .user-profile {
-            text-align: center;
-            padding: 20px;
-            border-bottom: 1px solid var(--light);
-        }
-        
-        .user-avatar {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
-            margin: 0 auto 15px;
-            border: 3px solid white;
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-        }
-        
-        .user-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--secondary);
-            margin-bottom: 5px;
-        }
-        
-        .user-role {
-            font-size: 12px;
-            color: var(--gray);
-            background: var(--light);
-            padding: 4px 12px;
-            border-radius: 15px;
-            display: inline-block;
-        }
-        
-        .sidebar-menu {
-            flex: 1;
-            padding: 20px 0;
-        }
-        
-        .menu-item {
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: var(--dark);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-        }
-        
-        .menu-item:hover {
-            background: var(--light);
-            border-left-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        .menu-item.active {
-            background: #e3f2fd;
-            border-left-color: var(--primary);
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .menu-item i {
-            font-size: 18px;
-            width: 24px;
-            text-align: center;
-        }
-        
-        .menu-text {
-            font-size: 14px;
-        }
-        
-        .sidebar-footer {
-            padding: 20px;
-            border-top: 1px solid var(--light);
-        }
-        
-        .logout-btn {
-            width: 100%;
-            padding: 12px 20px;
-            background: transparent;
-            border: 1px solid var(--danger);
-            color: var(--danger);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .logout-btn:hover {
-            background: var(--danger);
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            transition: all 0.3s ease;
-            padding: 20px;
-        }
-        
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .page-title {
-            color: var(--secondary);
-            font-size: 28px;
-            font-weight: 700;
-        }
-        
-        .page-subtitle {
-            color: var(--gray);
-            font-size: 16px;
-            margin-top: 5px;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            width: 45px;
-            height: 45px;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-        }
-        
-        /* Container e Cards (mantidos do anterior) */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            transition: all 0.3s ease;
-            border-top: 4px solid var(--primary);
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--light);
-        }
-        
-        .card-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--secondary);
-            font-size: 20px;
-            font-weight: 600;
-        }
-        
-        .card-title i {
-            color: var(--primary);
-            font-size: 24px;
-        }
-        
-        .badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .badge-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .badge-warning {
-            background: var(--warning);
-            color: white;
-        }
-        
-        /* Lista de Denúncias (mantido do anterior) */
-        .denuncia-list {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        
-        .denuncia-item {
-            background: var(--light);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .denuncia-item:hover {
-            background: #e3f2fd;
-            transform: translateX(5px);
-        }
-        
-        .denuncia-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        
-        .denuncia-protocolo {
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 14px;
-        }
-        
-        .denuncia-prioridade {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        
-        .prioridade-alta { background: #ffebee; color: var(--danger); }
-        .prioridade-media { background: #fff3e0; color: var(--warning); }
-        .prioridade-baixa { background: #e8f5e8; color: var(--success); }
-        
-        .denuncia-titulo {
-            font-weight: 600;
-            color: var(--secondary);
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-        
-        .denuncia-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-        
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--gray);
-        }
-        
-        .info-item i {
-            color: var(--primary);
-            width: 16px;
-        }
-        
-        .denuncia-descricao {
-            color: var(--gray);
-            font-size: 13px;
-            line-height: 1.4;
-            margin-bottom: 15px;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .denuncia-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #27ae60;
-            transform: translateY(-2px);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--gray);
-            color: var(--gray);
-        }
-        
-        .btn-outline:hover {
-            background: var(--gray);
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        /* Filtros */
-        .filters {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-select {
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: white;
-            font-size: 14px;
-            min-width: 150px;
-        }
-        
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 100%;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-            
-            .mobile-menu-btn {
-                display: flex;
-            }
-            
-            .denuncia-info {
-                grid-template-columns: 1fr;
-            }
-            
-            .denuncia-actions {
-                flex-direction: column;
-            }
-            
-            .filters {
-                flex-direction: column;
-            }
-            
-            .filter-select {
-                width: 100%;
-            }
-        }
-        
-        /* Animações */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .card {
-            animation: fadeInUp 0.6s ease-out;
-        }
-        
-        .card:nth-child(1) { animation-delay: 0.1s; }
-        .card:nth-child(2) { animation-delay: 0.2s; }
-        
-        /* Overlay para mobile */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-        
-        .sidebar-overlay.active {
-            display: block;
-        }
-    </style>
-</head>
-<body>
-    <!-- Sidebar Overlay (Mobile) -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+{% extends "tecnico/base.html" %} 
+{% load static %}
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="logo-text">Denúncias</div>
+{% block title %}Dashboard | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-inbox"></i>
+                Denúncias Não Atribuídas
             </div>
-            <div style="font-size: 12px; color: var(--gray);">Painel do Técnico</div>
-        </div>
-        
-        <div class="user-profile">
-            <div class="user-avatar">TS</div>
-            <div class="user-name">João Silva</div>
-            <div class="user-role">Técnico Especialista</div>
-        </div>
-        
-        <div class="sidebar-menu">
-            <a href="#" class="menu-item active">
-                <i class="fas fa-home"></i>
-                <span class="menu-text">Dashboard</span>
-            </a>            
-            <a href="#" class="menu-item">
-                <i class="fas fa-history"></i>
-                <span class="menu-text">Histórico</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-cog"></i>
-                <span class="menu-text">Configurações</span>
-            </a>
-        </div>
-        
-        <div class="sidebar-footer">
-            <button class="logout-btn" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                Sair do Sistema
-            </button>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="content-header">
-            <div>
-                <h1 class="page-title">Painel do Técnico</h1>
-                <p class="page-subtitle">Gerencie denúncias e acompanhe seu progresso</p>
-            </div>
+            <span class="badge badge-primary">{{ denuncias|length }} novas</span> 
         </div>
 
-        <div class="container">
-            <!-- Dashboard -->
-            <div class="dashboard">
-                <!-- Card: Denúncias Não Atribuídas -->
-                <div class="card">
-    <div class="card-header">
-        <div class="card-title">
-            <i class="fas fa-inbox"></i>
-            Denúncias Não Atribuídas
-        </div>
-        <span class="badge badge-primary">{{ denuncias|length }} novas</span> 
-    </div>
-
-    <div class="denuncia-list">
-        {% for denuncia in denuncias %}                 
-            <div class="denuncia-item" onclick="openDenunciaModal('{{ denuncia.protocolo }}')">
-                <div class="denuncia-header">
-                    <div class="denuncia-protocolo" style="font-size: 22px;">{{ denuncia.protocolo }}</div>
-                    
-                    <div class="denuncia-prioridade prioridade-{{ denuncia.prioridade|lower }}" style="font-size: 14px;">
-                        {{ denuncia.get_prioridade_display }}
+        <div class="denuncia-list">
+            {% for denuncia in denuncias %}
+                <div class="denuncia-item" onclick="openDenunciaModal('{{ denuncia.protocolo }}')">
+                    <div class="denuncia-header">
+                        <div class="denuncia-protocolo" style="font-size: 22px;">{{ denuncia.protocolo }}</div>
+                        
+                        <div class="denuncia-prioridade prioridade-{{ denuncia.prioridade|lower }}" style="font-size: 14px;">
+                            {{ denuncia.get_prioridade_display }}
+                        </div>
                     </div>
+                    
+                    <div class="denuncia-titulo" style="font-size: 18px;">{{ denuncia.titulo }}</div> 
+                    <br>
+                    
+                    <div class="denuncia-info">
+                        <div class="info-item">
+                            <i class="fas fa-road"></i>
+                            {{ denuncia.categoria.nome }}
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar"></i>
+                            {{ denuncia.data_criacao|date:"d/m/Y H:i" }}
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-user"></i>
+                            {{ denuncia.contato|default:"Anônimo" }}
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            {{ denuncia.dias_em_aberto }} dias em aberto
+                        </div>
+                    </div>
+                    
+                    <div class="denuncia-descricao">
+                        {{ denuncia.descricao|truncatewords:15 }}
+                    </div>
+                    
+                    <div class="denuncia-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); aceitarDenuncia('{{ denuncia.protocolo }}')">
+                            <i class="fas fa-check"></i>Aceitar
+                        </button>
+                        <a class="btn btn-primary" href="{% url 'tecnico:denuncia_detail' denuncia.protocolo %}">
+                            <i class="fas fa-eye"></i>Detalhes
+                        </a>
+                    </div>
+                </div>                        
+            {% empty %}
+                <p style="padding: 20px; text-align: center; color: var(--gray);">Nenhuma denúncia aguardando atribuição. Bom trabalho!</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-tasks"></i>
+                Minhas Denúncias em Andamento
+            </div>
+            <span class="badge badge-warning">3 pendentes</span>
+        </div>
+        
+        <div class="filters">
+            <select class="filter-select">
+                <option>Status: Todos</option>
+                <option>Em Análise</option>
+                <option>Em Andamento</option>
+                <option>Aguardando Peças</option>
+            </select>
+        </div>
+        
+        <div class="denuncia-list">
+            <div class="denuncia-item" onclick="openDenunciaModal('DEN-C3D5E7F9')">
+                <div class="denuncia-header">
+                    <div class="denuncia-protocolo">DEN-C3D5E7F9</div>
+                    <div class="denuncia-prioridade prioridade-alta">URGENTE</div>
                 </div>
-                
-                <div class="denuncia-titulo" style="font-size: 18px;">{{ denuncia.titulo }}</div> 
-                <br>
-                
+                <div class="denuncia-titulo">Vazamento de Água na Rua Secundária</div>
                 <div class="denuncia-info">
                     <div class="info-item">
-                        <i class="fas fa-road"></i>
-                        {{ denuncia.categoria.nome }}
+                        <i class="fas fa-tint"></i>
+                        Saneamento
                     </div>
                     <div class="info-item">
                         <i class="fas fa-calendar"></i>
-                        {{ denuncia.data_criacao|date:"d/m/Y H:i" }}
+                        Atribuída: Hoje
                     </div>
                     <div class="info-item">
-                        <i class="fas fa-user"></i>
-                        {{ denuncia.contato|default:"Anônimo" }}
+                        <i class="fas fa-map-marker-alt"></i>
+                        Vila Nova
                     </div>
                     <div class="info-item">
                         <i class="fas fa-clock"></i>
-                        {{ denuncia.dias_em_aberto }} dias em aberto
+                        Prazo: 2 dias
                     </div>
                 </div>
-                
                 <div class="denuncia-descricao">
-                    {{ denuncia.descricao|truncatewords:15 }}
+                    Vazamento em tubulação de água, causando alagamento na via. Necessária intervenção urgente...
                 </div>
-                
                 <div class="denuncia-actions">
-                    <button class="btn btn-primary" onclick="event.stopPropagation(); aceitarDenuncia('{{ denuncia.protocolo }}')">
-                        <i class="fas fa-check"></i>Aceitar
+                    <button class="btn btn-success" onclick="event.stopPropagation(); atualizarStatus('DEN-C3D5E7F9')">
+                        <i class="fas fa-edit"></i>Atualizar
                     </button>
-                    <a class="btn btn-primary" href="{% url 'tecnico:denuncia_detail' denuncia.protocolo %}">Detalhes</a>
-                </div>
-            </div>                        
-        {% empty %}
-            <p style="padding: 20px; text-align: center; color: var(--gray);">Nenhuma denúncia aguardando atribuição. Bom trabalho!</p>
-        {% endfor %}
-    </div>
-</div>
-
-                <!-- Card: Denúncias em Andamento -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-tasks"></i>
-                            Minhas Denúncias em Andamento
-                        </div>
-                        <span class="badge badge-warning">3 pendentes</span>
-                    </div>
-                    
-                    <div class="filters">
-                        <select class="filter-select">
-                            <option>Status: Todos</option>
-                            <option>Em Análise</option>
-                            <option>Em Andamento</option>
-                            <option>Aguardando Peças</option>
-                        </select>
-                    </div>
-                    
-                    <div class="denuncia-list">
-                        <!-- Denúncia em Andamento 1 -->
-                        <div class="denuncia-item" onclick="openDenunciaModal('DEN-C3D5E7F9')">
-                            <div class="denuncia-header">
-                                <div class="denuncia-protocolo">DEN-C3D5E7F9</div>
-                                <div class="denuncia-prioridade prioridade-alta">URGENTE</div>
-                            </div>
-                            <div class="denuncia-titulo">Vazamento de Água na Rua Secundária</div>
-                            <div class="denuncia-info">
-                                <div class="info-item">
-                                    <i class="fas fa-tint"></i>
-                                    Saneamento
-                                </div>
-                                <div class="info-item">
-                                    <i class="fas fa-calendar"></i>
-                                    Atribuída: Hoje
-                                </div>
-                                <div class="info-item">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    Vila Nova
-                                </div>
-                                <div class="info-item">
-                                    <i class="fas fa-clock"></i>
-                                    Prazo: 2 dias
-                                </div>
-                            </div>
-                            <div class="denuncia-descricao">
-                                Vazamento em tubulação de água, causando alagamento na via. Necessária intervenção urgente...
-                            </div>
-                            <div class="denuncia-actions">
-                                <button class="btn btn-success" onclick="event.stopPropagation(); atualizarStatus('DEN-C3D5E7F9')">
-                                    <i class="fas fa-edit"></i>Atualizar
-                                </button>
-                                <button class="btn btn-outline" onclick="event.stopPropagation(); visualizarDetalhes('DEN-C3D5E7F9')">
-                                    <i class="fas fa-eye"></i>Detalhes
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <button class="btn btn-outline" onclick="event.stopPropagation(); visualizarDetalhes('DEN-C3D5E7F9')">
+                        <i class="fas fa-eye"></i>Detalhes
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        // Controle do sidebar mobile
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-        mobileMenuBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            sidebarOverlay.classList.toggle('active');
-        });
-
-        sidebarOverlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            sidebarOverlay.classList.remove('active');
-        });
-        
-        function aceitarDenuncia(protocolo) {
-            if (confirm(`Deseja aceitar a denúncia ${protocolo}?`)) {
-                alert(`Denúncia ${protocolo} aceita com sucesso!`);
-            }
-        }
-        
-        function visualizarDetalhes(protocolo) {
-            openDenunciaModal(protocolo);
-        }
-        
-        function atualizarStatus(protocolo) {
-            alert(`Abrindo formulário para atualizar status da denúncia: ${protocolo}`);
-        }
-        
-        function logout() {
-            if (confirm('Deseja realmente sair do sistema?')) {
-                alert('Saindo do sistema...');
-                // Redirecionar para página de login
-                // window.location.href = '/logout';
-            }
-        }
-    </script>
-</body>
-</html>
+</div>
+{% endblock content %}
