@@ -141,12 +141,6 @@
             color: var(--primary);
         }
         
-        .menu-item.active {
-            background: #e3f2fd;
-            border-left-color: var(--primary);
-            color: var(--primary);
-            font-weight: 600;
-        }
         
         .menu-item i {
             font-size: 18px;
@@ -247,6 +241,7 @@
         }
         
         .card {
+            width: 100%;
             background: white;
             border-radius: 16px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
@@ -261,6 +256,7 @@
         }
         
         .card-header {
+            
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -541,26 +537,22 @@
                 </div>
                 <div class="logo-text">Denúncias</div>
             </div>
-            <div style="font-size: 12px; color: var(--gray);">Painel do Técnico</div>
         </div>
         
         <div class="user-profile">
-            <div class="user-avatar">TS</div>
+            <div class="user-avatar">{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}</div>
             <div class="user-name"> {{ user.first_name }} </div> 
             <div class="user-role">Técnico Especialista</div>
         </div>
         
         <div class="sidebar-menu">
             <a href="{% url 'tecnico:dashboard' %}" class="menu-item active"> 
-                <i class="fas fa-home"></i>
                 <span class="menu-text">Dashboard</span>
             </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-history"></i>
-                <span class="menu-text">Histórico</span>
+            <a href="{% url 'tecnico:minhas_denuncias' %}" class="menu-item">
+                <span class="menu-text">Minha Pauta</span>
             </a>
             <a href="#" class="menu-item">
-                <i class="fas fa-cog"></i>
                 <span class="menu-text">Configurações</span>
             </a>
             {% block extra_menu_items %}{% endblock %}

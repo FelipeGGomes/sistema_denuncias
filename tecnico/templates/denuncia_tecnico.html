@@ -1,0 +1,717 @@
+{% extends 'tecnico/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="header">
+        <div class="user-info">
+            <div class="user-details">
+                <h1>Minha Pauta</h1>
+                <p>Gerencie as denúncias atribuídas a você</p>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Filtros e Busca -->
+    <div class="card">
+        <div class="filters-row">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Buscar por protocolo, título ou endereço...">
+            </div>
+            <div class="filter-group">
+                <select class="filter-select" id="statusFilter">
+                    <option value="">Todos os status</option>
+                    <option value="ACEITA">Aceita</option>
+                    <option value="EM_ANALISE">Em Análise</option>
+                    <option value="EM_ANDAMENTO">Em Andamento</option>
+                    <option value="RESOLVIDA">Resolvida</option>
+                    <option value="ARQUIVADA">Arquivada</option>
+                </select>
+                <select class="filter-select" id="prioridadeFilter">
+                    <option value="">Todas as prioridades</option>
+                    <option value="URGENTE">Urgente</option>
+                    <option value="ALTA">Alta</option>
+                    <option value="MEDIA">Média</option>
+                    <option value="BAIXA">Baixa</option>
+                </select>
+                <input type="date" class="filter-select" id="dataInicioFilter" placeholder="Data início">
+                <input type="date" class="filter-select" id="dataFimFilter" placeholder="Data fim">
+                <button class="btn btn-outline" onclick="resetFilters()">
+                    <i class="fas fa-refresh"></i> Limpar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Tabela de Denúncias -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-list-check"></i>
+                Denúncias Atribuídas
+            </div>
+            <div class="header-actions">
+                <span class="badge badge-primary">{{ minhas_denuncias.paginator.count }} atendimentos</span>
+                <span class="pagination-info">
+                    Mostrando {{ minhas_denuncias.start_index }} - {{ minhas_denuncias.end_index }} de {{ minhas_denuncias.paginator.count }}
+                </span>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="denuncias-table" id="denunciasTable">
+                <thead>
+                    <tr>
+                        <th data-sort="protocolo" class="sortable">
+                            Protocolo <i class="fas fa-sort"></i>
+                        </th>
+                        <th data-sort="titulo" class="sortable">
+                            Título <i class="fas fa-sort"></i>
+                        </th>
+                        <th data-sort="categoria" class="sortable">
+                            Categoria <i class="fas fa-sort"></i>
+                        </th>
+                        <th data-sort="status" class="sortable">
+                            Status <i class="fas fa-sort"></i>
+                        </th>
+                        <th data-sort="prioridade" class="sortable">
+                            Prioridade <i class="fas fa-sort"></i>
+                        </th>
+                        <th data-sort="endereco" class="sortable">
+                            Localização <i class="fas fa-sort"></i>
+                        </th>
+                        <th data-sort="data_atualizacao" class="sortable">
+                            Data de Atribuição <i class="fas fa-sort"></i>
+                        </th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for denuncia in minhas_denuncias %}
+                    <tr class="denuncia-row" 
+                        data-status="{{ denuncia.status }}" 
+                        data-prioridade="{{ denuncia.prioridade }}"
+                        data-data="{{ denuncia.data_atualizacao|date:'Y-m-d' }}"
+                        data-protocolo="{{ denuncia.protocolo }}"
+                        data-titulo="{{ denuncia.titulo|lower }}"
+                        data-categoria="{{ denuncia.categoria.nome|lower }}"
+                        data-endereco="{{ denuncia.endereco|lower }}">
+                        <td>
+                            <div class="protocolo-cell">
+                                <i class="fas fa-file-alt"></i>
+                                <strong>{{ denuncia.protocolo }}</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="titulo-cell">
+                                <div class="denuncia-titulo">{{ denuncia.titulo }}</div>
+                                <div class="denuncia-descricao">{{ denuncia.descricao|truncatewords:8 }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="categoria-cell">
+                                <i class="fas fa-{{ denuncia.categoria.icone|default:'folder' }}"></i>
+                                {{ denuncia.categoria.nome }}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ denuncia.status|lower }}">
+                                <i class="fas fa-{{ denuncia.get_status_display|lower }}"></i>
+                                {{ denuncia.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="priority-badge priority-{{ denuncia.prioridade|lower }}">
+                                <i class="fas fa-{{ denuncia.get_prioridade_display|lower }}"></i>
+                                {{ denuncia.get_prioridade_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="localizacao-cell">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span class="endereco-text">{{ denuncia.endereco|truncatewords:3 }}</span>
+                                {% if denuncia.ponto_referencia %}
+                                <small class="ponto-referencia" title="{{ denuncia.ponto_referencia }}">
+                                    {{ denuncia.ponto_referencia|truncatewords:2 }}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="data-cell">
+                                <div class="data-principal">{{ denuncia.data_atualizacao|date:"d/m/Y" }}</div>
+                                <div class="data-secundaria">{{ denuncia.data_atualizacao|date:"H:i" }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'tecnico:denuncia_detail' denuncia.protocolo %}" class="btn btn-primary btn-sm" title="Ver detalhes" style="text-decoration: none;">
+                                    <i class="fas fa-eye"></i>
+                                    <span class="btn-text">Detalhes</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h4>Nenhuma denúncia atribuída</h4>
+                                <p>Você não possui denúncias atribuídas no momento.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginação -->
+        {% if minhas_denuncias.has_other_pages %}
+        <div class="pagination-container">
+            <div class="pagination-info-mobile">
+                Página {{ minhas_denuncias.number }} de {{ minhas_denuncias.paginator.num_pages }}
+            </div>
+            <div class="pagination">
+                {% if minhas_denuncias.has_previous %}
+                    <a href="?page=1{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link" title="Primeira página">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                    <a href="?page={{ minhas_denuncias.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link" title="Página anterior">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                {% endif %}
+
+                {% for num in minhas_denuncias.paginator.page_range %}
+                    {% if minhas_denuncias.number == num %}
+                        <span class="page-link current">{{ num }}</span>
+                    {% elif num > minhas_denuncias.number|add:'-3' and num < minhas_denuncias.number|add:'3' %}
+                        <a href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if minhas_denuncias.has_next %}
+                    <a href="?page={{ minhas_denuncias.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link" title="Próxima página">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page={{ minhas_denuncias.paginator.num_pages }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link" title="Última página">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="pagination-stats">
+                {{ minhas_denuncias.start_index }} - {{ minhas_denuncias.end_index }} de {{ minhas_denuncias.paginator.count }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    /* Container da tabela */
+    .table-container {
+        overflow-x: auto;
+        margin: 0 -20px;
+        padding: 0 20px;
+    }
+
+    /* Estilos específicos para a tabela */
+    .denuncias-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        min-width: 800px;
+    }
+
+    .denuncias-table th {
+        background: var(--light);
+        padding: 15px 12px;
+        text-align: left;
+        font-weight: 600;
+        color: var(--secondary);
+        border-bottom: 2px solid var(--primary);
+        font-size: 14px;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .denuncias-table th.sortable:hover {
+        background: #e3f2fd;
+    }
+
+    .denuncias-table th i {
+        margin-left: 5px;
+        font-size: 12px;
+        opacity: 0.6;
+    }
+
+    .denuncias-table th.sort-asc i.fa-sort {
+        display: none;
+    }
+
+    .denuncias-table th.sort-desc i.fa-sort {
+        display: none;
+    }
+
+    .denuncias-table td {
+        padding: 15px 12px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: top;
+    }
+
+    .denuncias-table tr:hover {
+        background: #f8f9fa;
+    }
+
+    /* Células personalizadas */
+    .protocolo-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: 'Courier New', monospace;
+    }
+
+    .protocolo-cell i {
+        color: var(--primary);
+    }
+
+    .titulo-cell .denuncia-titulo {
+        font-weight: 600;
+        color: var(--secondary);
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+
+    .titulo-cell .denuncia-descricao {
+        font-size: 12px;
+        color: var(--gray);
+        line-height: 1.3;
+    }
+
+    .categoria-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .localizacao-cell {
+        font-size: 13px;
+        min-width: 150px;
+    }
+
+    .localizacao-cell .endereco-text {
+        display: block;
+    }
+
+    .localizacao-cell .ponto-referencia {
+        display: block;
+        color: var(--gray);
+        font-size: 11px;
+        margin-top: 2px;
+        font-style: italic;
+    }
+
+    .data-cell {
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .data-cell .data-principal {
+        font-weight: 600;
+        color: var(--secondary);
+    }
+
+    .data-cell .data-secundaria {
+        font-size: 11px;
+        color: var(--gray);
+    }
+
+    /* Badges */
+    .status-badge, .priority-badge {
+        padding: 6px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+    }
+
+    .status-aceita { background: #d4edda; color: #155724; }
+    .status-em_analise { background: #fff3cd; color: #856404; }
+    .status-em_andamento { background: #cce7ff; color: #004085; }
+    .status-resolvida { background: #d1ecf1; color: #0c5460; }
+    .status-arquivada { background: #e2e3e5; color: #383d41; }
+
+    .priority-urgente { background: #f8d7da; color: #721c24; }
+    .priority-alta { background: #ffeaa7; color: #856404; }
+    .priority-media { background: #fff3cd; color: #856404; }
+    .priority-baixa { background: #d4edda; color: #155724; }
+
+    /* Botões de ação */
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        min-width: 100px;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .btn-text {
+        display: inline;
+    }
+
+    /* Filtros */
+    .filters-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        position: relative;
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-select {
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: white;
+        font-size: 13px;
+        min-width: 120px;
+    }
+
+    /* Paginação */
+    .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+
+    .page-link {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        text-decoration: none;
+        color: var(--secondary);
+        font-size: 13px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+    }
+
+    .page-link:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .page-link.current {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .pagination-info {
+        font-size: 13px;
+        color: var(--gray);
+    }
+
+    .pagination-stats {
+        font-size: 13px;
+        color: var(--gray);
+    }
+
+    .pagination-info-mobile {
+        display: none;
+        font-size: 13px;
+        color: var(--gray);
+        text-align: center;
+        width: 100%;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    /* Estado vazio */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--gray);
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    .empty-state h4 {
+        margin-bottom: 10px;
+        color: var(--secondary);
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+        .filters-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+
+        .search-box {
+            min-width: 100%;
+        }
+
+        .filter-group {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .table-container {
+            margin: 0 -15px;
+            padding: 0 15px;
+        }
+
+        .denuncias-table {
+            font-size: 12px;
+        }
+
+        .denuncias-table th,
+        .denuncias-table td {
+            padding: 10px 6px;
+        }
+
+        .btn-text {
+            display: none;
+        }
+
+        .btn-sm {
+            padding: 6px 8px;
+        }
+
+        .pagination-container {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pagination-info,
+        .pagination-stats {
+            display: none;
+        }
+
+        .pagination-info-mobile {
+            display: block;
+        }
+
+        .header-actions {
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .filter-group {
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .filter-select {
+            flex: 1;
+            min-width: 0;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .denuncias-table th:nth-child(3),
+        .denuncias-table td:nth-child(3),
+        .denuncias-table th:nth-child(5),
+        .denuncias-table td:nth-child(5) {
+            display: none;
+        }
+
+        .filter-group {
+            flex-direction: column;
+        }
+
+        .filter-select {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    // Variáveis de ordenação
+    let currentSort = '{{ request.GET.sort|default:"data_atualizacao" }}';
+    let currentOrder = '{{ request.GET.order|default:"desc" }}';
+
+    // Inicializar ícones de ordenação
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSortIcons();
+    });
+
+    // Filtros e Busca
+    document.getElementById('searchInput').addEventListener('input', filterDenuncias);
+    document.getElementById('statusFilter').addEventListener('change', filterDenuncias);
+    document.getElementById('prioridadeFilter').addEventListener('change', filterDenuncias);
+    document.getElementById('dataInicioFilter').addEventListener('change', filterDenuncias);
+    document.getElementById('dataFimFilter').addEventListener('change', filterDenuncias);
+
+    function filterDenuncias() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const prioridadeFilter = document.getElementById('prioridadeFilter').value;
+        const dataInicio = document.getElementById('dataInicioFilter').value;
+        const dataFim = document.getElementById('dataFimFilter').value;
+        
+        const rows = document.querySelectorAll('.denuncia-row');
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            const protocolo = row.getAttribute('data-protocolo');
+            const titulo = row.getAttribute('data-titulo');
+            const endereco = row.getAttribute('data-endereco');
+            const status = row.getAttribute('data-status');
+            const prioridade = row.getAttribute('data-prioridade');
+            const data = row.getAttribute('data-data');
+            
+            const matchesSearch = protocolo.includes(searchTerm) || 
+                                titulo.includes(searchTerm) || 
+                                endereco.includes(searchTerm);
+            const matchesStatus = !statusFilter || status === statusFilter;
+            const matchesPrioridade = !prioridadeFilter || prioridade === prioridadeFilter;
+            const matchesDataInicio = !dataInicio || data >= dataInicio;
+            const matchesDataFim = !dataFim || data <= dataFim;
+            
+            if (matchesSearch && matchesStatus && matchesPrioridade && matchesDataInicio && matchesDataFim) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Atualizar contador
+        document.querySelector('.badge').textContent = visibleCount + ' atendimentos';
+    }
+
+    function resetFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('statusFilter').value = '';
+        document.getElementById('prioridadeFilter').value = '';
+        document.getElementById('dataInicioFilter').value = '';
+        document.getElementById('dataFimFilter').value = '';
+        filterDenuncias();
+    }
+
+    // Ordenação
+    document.querySelectorAll('.sortable').forEach(header => {
+        header.addEventListener('click', function() {
+            const sortField = this.getAttribute('data-sort');
+            
+            if (currentSort === sortField) {
+                // Alternar entre asc e desc
+                currentOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+                // Nova coluna, ordem padrão desc
+                currentSort = sortField;
+                currentOrder = 'desc';
+            }
+            
+            // Redirecionar com parâmetros de ordenação
+            const url = new URL(window.location.href);
+            url.searchParams.set('sort', currentSort);
+            url.searchParams.set('order', currentOrder);
+            url.searchParams.set('page', '1'); // Voltar para primeira página
+            
+            window.location.href = url.toString();
+        });
+    });
+
+    function updateSortIcons() {
+        document.querySelectorAll('.sortable').forEach(header => {
+            const icon = header.querySelector('i');
+            const sortField = header.getAttribute('data-sort');
+            
+            icon.className = 'fas fa-sort';
+            
+            if (sortField === currentSort) {
+                if (currentOrder === 'asc') {
+                    icon.className = 'fas fa-sort-up';
+                    header.classList.add('sort-asc');
+                    header.classList.remove('sort-desc');
+                } else {
+                    icon.className = 'fas fa-sort-down';
+                    header.classList.add('sort-desc');
+                    header.classList.remove('sort-asc');
+                }
+            } else {
+                header.classList.remove('sort-asc', 'sort-desc');
+            }
+        });
+    }
+
+    // Auto-focus no campo de busca
+    document.getElementById('searchInput').focus();
+</script>
+{% endblock %}

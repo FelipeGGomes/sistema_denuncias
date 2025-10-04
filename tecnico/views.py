@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Tecnico
 from denuncias.models import Denuncia, LogDenuncia
 from django.views.decorators.http import require_POST
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Case, When, Value, IntegerField
 
 @login_required
 def denuncia_list(request):
@@ -76,4 +78,52 @@ def minhas_denuncias(request):
         tecnico=request.user
     ).order_by('-data_criacao')
     
-    return render(request, 'dashboard.html', {'denuncia_user': denuncia_user})
+    return render(request, 'teste.html', {'denuncia_user': denuncia_user})
+
+
+
+@login_required
+def dashboard(request):
+    denuncias_nao_atribuidas = Denuncia.objects.filter(
+        tecnico__isnull=True,
+        status='NÃO_ATRIBUIDO'
+    )
+
+    minhas_denuncias_lista = Denuncia.objects.filter(
+        tecnico=request.user
+    ).exclude(
+        status__in=['RESOLVIDA', 'ARQUIVADA']
+    )
+
+    sort_field = request.GET.get('sort', 'data_atualizacao') 
+    order = request.GET.get('order', 'desc')
+    
+
+    valid_sort_fields = ['protocolo', 'titulo', 'categoria__nome', 'status', 'prioridade', 'data_atualizacao']
+    if sort_field not in valid_sort_fields:
+        sort_field = 'data_atualizacao' 
+
+    order_prefix = '-' if order == 'desc' else ''
+    minhas_denuncias_lista = minhas_denuncias_lista.order_by(f'{order_prefix}{sort_field}')
+
+   
+    paginator = Paginator(minhas_denuncias_lista, 15)
+    page_number = request.GET.get('page', 1)
+
+    try:
+
+        minhas_denuncias_paginadas = paginator.page(page_number)
+    except PageNotAnInteger:
+        minhas_denuncias_paginadas = paginator.page(1)
+    except EmptyPage:
+        minhas_denuncias_paginadas = paginator.page(paginator.num_pages)
+
+    context = {
+        'denuncias_nao_atribuidas': denuncias_nao_atribuidas,
+        'minhas_denuncias': minhas_denuncias_paginadas,
+        'current_sort': sort_field,
+        'current_order': order,
+    }
+
+
+    return render(request, 'denuncia_tecnico.html', context)
