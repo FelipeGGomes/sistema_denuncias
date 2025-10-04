@@ -1,18 +1,31 @@
+from django.utils import timezone
 from pyexpat.errors import messages
 from venv import logger
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from tecnico.forms import UpdateStatusForm
 from .models import Tecnico
 from denuncias.models import Denuncia, LogDenuncia
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Case, When, Value, IntegerField
+from django.contrib import messages
 
 @login_required
 def denuncia_list(request):
     denuncias = Denuncia.objects.filter(status='NÃO_ATRIBUIDO')
-    return render(request, 'dashboard.html', {'denuncias': denuncias})
+    denuncias_em_analise = Denuncia.objects.filter(status='EM_ANALISE')
+    denuncias_em_andamento = Denuncia.objects.filter(status='EM_ANDAMENTO')
+    denuncias_resolvidas = Denuncia.objects.filter(status='RESOLVIDA')
+    denuncias_arquivadas = Denuncia.objects.filter(status='ARQUIVADA')
+    
+    return render(request, 'dashboard.html', {
+        'denuncias': denuncias,
+        'denuncias_em_analise': denuncias_em_analise,
+        'denuncias_em_andamento': denuncias_em_andamento,
+        'denuncias_resolvidas': denuncias_resolvidas,
+        'denuncias_arquivadas': denuncias_arquivadas,
+    })
 
 @login_required
 def denuncia_detail(request, protocolo):
@@ -127,3 +140,47 @@ def dashboard(request):
 
 
     return render(request, 'denuncia_tecnico.html', context)
+
+@login_required
+def detalhe_tecnico(request, protocolo):
+    denuncia = get_object_or_404(Denuncia, protocolo=protocolo)
+    if not request.user.is_superuser and denuncia.tecnico != request.user:
+        messages.error(request, "Você não tem permissão para ver esta denúncia.")
+        return redirect('tecnico:dashboard')
+
+    if request.method == 'POST':
+        form = UpdateStatusForm(request.POST)
+        if form.is_valid():
+            novo_status = form.cleaned_data['status']
+            comentario = form.cleaned_data['comentario']
+
+            denuncia.status = novo_status
+            
+            if novo_status == 'RESOLVIDA':
+                denuncia.data_resolucao = timezone.now()
+            
+            denuncia.save()
+
+            LogDenuncia.objects.create(
+                denuncia=denuncia,
+                usuario=request.user,
+                tipo_acao='STATUS',
+                acao=f'Status alterado para "{denuncia.get_status_display()}"',
+                descricao=comentario
+            )
+
+            messages.success(request, f'O status da denúncia {denuncia.protocolo} foi atualizado com sucesso.')
+            return redirect('tecnico:denuncia_detail', protocolo=denuncia.protocolo)
+    
+    else:
+        
+        form = UpdateStatusForm()
+
+    logs = LogDenuncia.objects.filter(denuncia=denuncia).order_by('-data_acao')
+
+    context = {
+        'denuncia': denuncia,
+        'form': form,
+        'logs': logs,
+    }
+    return render(request, 'detalhe_tecnico.html', context)

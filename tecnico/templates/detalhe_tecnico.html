@@ -1,0 +1,148 @@
+{% extends 'tecnico/base.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <!-- Cabeçalho com informações principais -->
+        <div class="header-section">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="page-title mb-1">Detalhes da Denúncia: {{ denuncia.protocolo }} - 
+                        {{ denuncia.get_status_display }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="col">
+            <!-- Coluna principal com informações e formulário -->
+            <div class="col-lg-8">
+                <!-- Card de informações da denúncia -->
+                <div class="card mb-4">
+                    <div class="card">
+                        <h5 class="card-title mb-0"><i class="fas fa-info-circle me-2"></i>Informações da Denúncia</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="fw-bold">Descrição</h6>
+                                <p class="mb-4">{{ denuncia.descricao }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="priority-indicator mb-3">
+                                    <span class="badge priority-{{ denuncia.prioridade|lower }}">
+                                        <i class="fas fa-flag me-1"></i>{{ denuncia.get_prioridade_display }}
+                                    </span>
+                                </div>
+
+                                {% if denuncia.foto %}
+                                <div class="photo-preview mb-3">
+                                    <h6 class="fw-bold">Foto Anexada</h6>
+                                    <a href="{{ denuncia.foto.url }}" target="_blank" class="d-block">
+                                        <div class="photo-thumbnail">
+                                            <img src="{{ denuncia.foto.url }}" alt="Foto da denúncia" class="img-thumbnail" style="max-height: 200px;">
+                                            <div class="photo-overlay">
+                                                <i class="fas fa-search-plus"></i>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <hr>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-folder me-2"></i>Categoria:</strong> {{ denuncia.categoria.nome }}</p>
+                                <p><strong><i class="fas fa-calendar me-2"></i>Data de Criação:</strong> {{ denuncia.data_criacao|date:"d/m/Y H:i" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-map-marker-alt me-2"></i>Endereço:</strong> {{ denuncia.endereco }}</p>
+                                {% if denuncia.data_atualizacao %}
+                                <p><strong><i class="fas fa-sync me-2"></i>Última Atualização:</strong> {{ denuncia.data_atualizacao|date:"d/m/Y H:i" }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card para atualização de status -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-edit me-2"></i>Atualizar Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.status.id_for_label }}" class="form-label fw-bold">{{ form.status.label }}</label>
+                                    {{ form.status }}
+                                    {% if form.status.help_text %}
+                                    <div class="form-text">{{ form.status.help_text }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.comentario.id_for_label }}" class="form-label fw-bold">{{ form.comentario.label }}</label>
+                                {{ form.comentario }}
+                                {% if form.comentario.help_text %}
+                                <div class="form-text">{{ form.comentario.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Salvar Alterações
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna lateral com histórico -->
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-history me-2"></i>Histórico de Ações</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if logs %}
+                        <div class="timeline-container">
+                            {% for log in logs %}
+                            <div class="timeline-item {% if forloop.first %}first-item{% endif %}">
+                                <div class="timeline-marker">
+                                    <i class="fas fa-{{ log.icone|default:'circle' }}"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <h6 class="mb-0">{{ log.acao }}</h6>
+                                        <small class="text-muted">{{ log.data_acao|date:"d/m/Y H:i" }}</small>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p class="mb-1"><small>Por: {{ log.usuario.username|default:'Sistema' }}</small></p>
+                                        {% if log.descricao %}
+                                        <p class="mt-2 mb-0">{{ log.descricao }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-inbox fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">Nenhum histórico de ações para esta denúncia.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

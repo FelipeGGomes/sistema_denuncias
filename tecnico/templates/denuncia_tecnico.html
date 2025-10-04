@@ -25,11 +25,8 @@
             <div class="filter-group">
                 <select class="filter-select" id="statusFilter">
                     <option value="">Todos os status</option>
-                    <option value="ACEITA">Aceita</option>
                     <option value="EM_ANALISE">Em Análise</option>
                     <option value="EM_ANDAMENTO">Em Andamento</option>
-                    <option value="RESOLVIDA">Resolvida</option>
-                    <option value="ARQUIVADA">Arquivada</option>
                 </select>
                 <select class="filter-select" id="prioridadeFilter">
                     <option value="">Todas as prioridades</option>
@@ -151,7 +148,7 @@
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <a href="{% url 'tecnico:denuncia_detail' denuncia.protocolo %}" class="btn btn-primary btn-sm" title="Ver detalhes" style="text-decoration: none;">
+                                <a href="{% url 'tecnico:detalhe_denuncia' denuncia.protocolo %}" class="btn btn-primary btn-sm" title="Ver detalhes" style="text-decoration: none;">
                                     <i class="fas fa-eye"></i>
                                     <span class="btn-text">Detalhes</span>
                                 </a>
