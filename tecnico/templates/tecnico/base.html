@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Painel do Técnico - Denúncias{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     
      <style>
         :root {
@@ -547,13 +548,15 @@
         
         <div class="sidebar-menu">
             <a href="{% url 'tecnico:dashboard' %}" class="menu-item active"> 
-                <span class="menu-text">Dashboard</span>
+                <span class="menu-text"><i class='fas fa-desktop'></i>
+                       Dashboard</span>
             </a>
             <a href="{% url 'tecnico:minhas_denuncias' %}" class="menu-item">
-                <span class="menu-text">Minha Pauta</span>
+                <span class="menu-text"><i class='fas fa-folder-open'></i>   Minha Pauta</span>
             </a>
-            <a href="#" class="menu-item">
-                <span class="menu-text">Configurações</span>
+            <a href="{% url 'tecnico:perfil' %}" class="menu-item">
+                <span class="menu-text"><i class='fas fa-address-card'></i>
+                        Perfil</span>
             </a>
             {% block extra_menu_items %}{% endblock %}
         </div>
@@ -628,6 +631,8 @@
         }
 
     </script>
+
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
     
     {% block javascript %}
 

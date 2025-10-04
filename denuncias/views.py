@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from .forms import DenunciaForm, DenunciaSearchForm, AdminDenunciaUpdateForm
-from .models import Denuncia, Categoria
+from .models import Denuncia, Categoria, LogDenuncia
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 import json
@@ -47,7 +47,9 @@ def denuncia_search_view(request):
     return render(request, 'denuncias/search.html', {'form': form})
 def denuncia_detail_view(request, protocolo):
     denuncia = get_object_or_404(Denuncia, protocolo=protocolo)
-    return render(request, 'denuncias/detail.html', {'denuncia': denuncia})
+    logs = LogDenuncia.objects.filter(denuncia=denuncia)
+    
+    return render(request, 'denuncias/detail.html', {'denuncia': denuncia, 'logs': logs})
 
 # --- Views Administrativas ---
 @staff_member_required

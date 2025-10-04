@@ -4,7 +4,7 @@ from venv import logger
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from tecnico.forms import UpdateStatusForm
+from tecnico.forms import AlterarEmailForm, AlterarSenhaForm, UpdateStatusForm
 from .models import Tecnico
 from denuncias.models import Denuncia, LogDenuncia
 from django.views.decorators.http import require_POST
@@ -14,10 +14,10 @@ from django.contrib import messages
 @login_required
 def denuncia_list(request):
     denuncias = Denuncia.objects.filter(status='NÃO_ATRIBUIDO')
-    denuncias_em_analise = Denuncia.objects.filter(status='EM_ANALISE')
-    denuncias_em_andamento = Denuncia.objects.filter(status='EM_ANDAMENTO')
-    denuncias_resolvidas = Denuncia.objects.filter(status='RESOLVIDA')
-    denuncias_arquivadas = Denuncia.objects.filter(status='ARQUIVADA')
+    denuncias_em_analise = Denuncia.objects.filter(status='EM_ANALISE', tecnico=request.user)
+    denuncias_em_andamento = Denuncia.objects.filter(status='EM_ANDAMENTO', tecnico=request.user)
+    denuncias_resolvidas = Denuncia.objects.filter(status='RESOLVIDA', tecnico=request.user)
+    denuncias_arquivadas = Denuncia.objects.filter(status='ARQUIVADA', tecnico=request.user)
     
     return render(request, 'dashboard.html', {
         'denuncias': denuncias,
@@ -165,12 +165,12 @@ def detalhe_tecnico(request, protocolo):
                 denuncia=denuncia,
                 usuario=request.user,
                 tipo_acao='STATUS',
-                acao=f'Status alterado para "{denuncia.get_status_display()}"',
+                acao=f'Status: {denuncia.get_status_display()}',
                 descricao=comentario
             )
 
             messages.success(request, f'O status da denúncia {denuncia.protocolo} foi atualizado com sucesso.')
-            return redirect('tecnico:denuncia_detail', protocolo=denuncia.protocolo)
+            return redirect('tecnico:detalhe_denuncia', protocolo=denuncia.protocolo)
     
     else:
         
@@ -184,3 +184,37 @@ def detalhe_tecnico(request, protocolo):
         'logs': logs,
     }
     return render(request, 'detalhe_tecnico.html', context)
+
+
+@login_required
+def perfil_tecnico(request):
+    return render(request, 'perfil_tecnico.html')
+
+
+@login_required
+def alterar_email(request):
+    if request.method == 'POST':
+        form = AlterarEmailForm(request.POST)
+        if form.is_valid():
+            novo_email = form.cleaned_data['novo_email']
+            request.user.email = novo_email
+            request.user.save()
+            messages.success(request, 'E-mail alterado com sucesso!')
+            return redirect('tecnico:perfil')
+    else:
+        form = AlterarEmailForm()
+    return render(request, 'alterar_email.html', {'form': form})
+
+
+@login_required
+def alterar_senha(request):
+    if request.method == 'POST':
+        form = AlterarSenhaForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Senha alterada com sucesso!')
+            return redirect('tecnico:perfil')
+    else:
+        form = AlterarSenhaForm(request.user)
+    return render(request, 'alterar_senha.html', {'form': form})
+

@@ -1,0 +1,129 @@
+{% extends 'tecnico/base.html' %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Cabeçalho -->
+            <div class="header-section mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="page-title mb-0">Meu Perfil</h1>
+                </div>
+            </div>
+            <br>
+
+            <!-- Card de Informações Pessoais -->
+            <div class="card mb-4" style="width: 100%;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Informações Pessoais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label fw-bold text-primary">Nome Completo</label>
+                                    <p class="form-control-static">{{ user.get_full_name|default:user.username }}</p>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label fw-bold text-primary">Nome de Usuário</label>
+                                    <p class="form-control-static">{{ user.username }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label fw-bold text-primary">E-mail</label>
+                                    <p class="form-control-static">{{ user.email }}</p>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label fw-bold text-primary">Data de Cadastro</label>
+                                    <p class="form-control-static">{{ user.date_joined|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
+                            {% if user.tecnico.telefone %}
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label fw-bold text-primary">Telefone</label>
+                                    <p class="form-control-static">{{ user.tecnico.telefone }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <br>
+
+                            <div class="col-md-3 d-flex gap-2">
+                                <a href="{% url 'tecnico:alterar_email' %}" class="btn btn-primary w-50" style="text-decoration: none; gap: 8px; margin-bottom: 10px; 
+                                display: flex; justify-content: center; padding: 10px 15px;">
+                                    <i class="fas fa-envelope me-2"></i>Alterar E-mail
+                                </a>
+
+                                <a href="{% url 'auth:password_change' %}" class="btn btn-primary w-50" style="text-decoration: none; gap: 8px; margin-bottom: 10px; 
+                                display: flex; justify-content: center; padding: 10px 15px;">
+                                    <i class="fas fa-lock me-2"></i>Alterar Senha
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>         
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-avatar .avatar-placeholder {
+    width: 120px;
+    height: 120px;
+}
+
+.stat-card {
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+
+a:hover {
+    background-color: #007bff; /* Cor de fundo ao passar o mouse */
+    color: white; /* Muda a cor do texto para branco ao passar o mouse */
+}
+
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.form-control-static {
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+}
+
+.list-group-item {
+    border: none;
+    padding: 15px 0;
+}
+
+.list-group-item:first-child {
+    padding-top: 0;
+}
+
+.list-group-item:last-child {
+    padding-bottom: 0;
+}
+</style>
+{% endblock %}

@@ -9,5 +9,8 @@ urlpatterns = [
     path('denuncia/aceitar/<str:protocolo>/', views.aceitar_denuncia, name='aceitar_denuncia'),
     path('minhas-denuncias/', views.dashboard, name='minhas_denuncias'),
     path('denuncia/detalhe/<str:protocolo>/', views.detalhe_tecnico, name='detalhe_denuncia'),
+    path('perfil/', views.perfil_tecnico, name='perfil'),
+    path('alterar-email/', views.alterar_email, name='alterar_email'),
+    path('alterar-senha/', views.alterar_senha, name='alterar_senha'),
     
 ]
