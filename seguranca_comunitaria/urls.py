@@ -23,9 +23,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
      # Inclui as URLs na raiz do site
+    path('', include('denuncias.urls')),
     path('admin/', admin.site.urls),
-    path('denuncia/', include('denuncias.urls')), # Inclui as URLs na raiz do site
-    path('tecnico/', include('tecnico.urls')), # Inclui as URLs do app tecnico
+    path('tecnico/', include('tecnico.urls')),
+    path('auth/', include('authentication.urls')),
 ] 
 
 if settings.DEBUG:

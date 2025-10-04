@@ -546,7 +546,7 @@
         
         <div class="user-profile">
             <div class="user-avatar">TS</div>
-            <div class="user-name">João Silva</div> 
+            <div class="user-name"> {{ user.first_name }} </div> 
             <div class="user-role">Técnico Especialista</div>
         </div>
         
@@ -569,7 +569,7 @@
         <div class="sidebar-footer">
             <button class="logout-btn" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i>
-                Sair do Sistema
+                Sair
             </button>
         </div>
     </div>
@@ -590,8 +590,12 @@
         </div>
     </div>
 
-    <script>
-        // Controle do sidebar mobile
+       <script>
+        // =======================================================
+        // AQUI FICAM APENAS OS SCRIPTS GLOBAIS (PARA TODAS AS PÁGINAS)
+        // =======================================================
+
+        // Controle do sidebar mobile (é global)
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -608,31 +612,36 @@
             });
         }
         
-        // Funções globais para uso dos botões de ação
-        function openDenunciaModal(protocolo) {
-            alert(`Abrindo detalhes da denúncia: ${protocolo}`);
-        }
-        
-        function aceitarDenuncia(protocolo) {
-            if (confirm(`Deseja aceitar a denúncia ${protocolo}?`)) {
-                alert(`Denúncia ${protocolo} aceita com sucesso!`);
-            }
-        }
-        
-        function visualizarDetalhes(protocolo) {
-            // Em produção, você faria uma requisição AJAX ou um redirecionamento
-            openDenunciaModal(protocolo); 
-        }
-        
-        function atualizarStatus(protocolo) {
-            alert(`Abrindo formulário para atualizar status da denúncia: ${protocolo}`);
-        }
-        
         function logout() {
             if (confirm('Deseja realmente sair do sistema?')) {
-                window.location.href = '/logout/'; // Substitua por sua rota de logout
+                fetch("{% url 'auth:logout' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'  // Enviando o CSRF token para garantir a segurança
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = "/auth/login/"; 
+                    } else {
+                        alert('Erro ao realizar o logout');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro no fetch:', error);
+                    alert('Ocorreu um erro ao tentar sair.');
+                });
             }
         }
+
     </script>
+    
+    {% block javascript %}
+
+    {# SCRIPTS ESPECÍFICOS DA PÁGINA (COMO O FETCH) SERÃO INJETADOS AQUI #}
+    
+    {% endblock javascript %}
+
 </body>
 </html>

@@ -166,6 +166,15 @@ class Denuncia(models.Model):
         verbose_name="Observações Internas",
         help_text="Observações para uso da equipe administrativa"
     )
+    
+    tecnico = models.ForeignKey(
+    'auth.User', 
+    null=True, 
+    blank=True, 
+    on_delete=models.SET_NULL, 
+    related_name='denuncias_atribuidas',
+    verbose_name="Técnico Responsável"
+    )
 
     class Meta:
         verbose_name = 'Denúncia'
@@ -230,12 +239,12 @@ class Denuncia(models.Model):
 
 class LogDenuncia(models.Model):
     TIPO_ACAO_CHOICES = [
-        ('CRIACAO', 'Criação'),
-        ('ATUALIZACAO', 'Atualização'),
-        ('STATUS', 'Alteração de Status'),
-        ('PRIORIDADE', 'Alteração de Prioridade'),
-        ('RESOLUCAO', 'Resolução'),
-        ('COMENTARIO', 'Comentário'),
+        ('NÃO_ATRIBUIDO', 'Aguardando Atribuição'),
+        ('RECEBIDA', 'Recebida'),
+        ('EM_ANALISE', 'Em Análise'),
+        ('EM_ANDAMENTO', 'Em Andamento'),
+        ('RESOLVIDA', 'Resolvida'),
+        ('ARQUIVADA', 'Arquivada'),
     ]
 
     denuncia = models.ForeignKey(

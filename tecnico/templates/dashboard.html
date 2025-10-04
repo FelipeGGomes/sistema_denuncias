@@ -1,127 +1,163 @@
-{% extends "tecnico/base.html" %} 
+{% extends "tecnico/base.html" %}
 {% load static %}
 
 {% block title %}Dashboard | {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="dashboard">
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">
-                <i class="fas fa-inbox"></i>
-                Denúncias Não Atribuídas
-            </div>
-            <span class="badge badge-primary">{{ denuncias|length }} novas</span> 
-        </div>
 
-        <div class="denuncia-list">
-            {% for denuncia in denuncias %}
-                <div class="denuncia-item" onclick="openDenunciaModal('{{ denuncia.protocolo }}')">
-                    <div class="denuncia-header">
-                        <div class="denuncia-protocolo" style="font-size: 22px;">{{ denuncia.protocolo }}</div>
-                        
-                        <div class="denuncia-prioridade prioridade-{{ denuncia.prioridade|lower }}" style="font-size: 14px;">
-                            {{ denuncia.get_prioridade_display }}
-                        </div>
-                    </div>
-                    
-                    <div class="denuncia-titulo" style="font-size: 18px;">{{ denuncia.titulo }}</div> 
-                    <br>
-                    
-                    <div class="denuncia-info">
-                        <div class="info-item">
-                            <i class="fas fa-road"></i>
-                            {{ denuncia.categoria.nome }}
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-calendar"></i>
-                            {{ denuncia.data_criacao|date:"d/m/Y H:i" }}
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-user"></i>
-                            {{ denuncia.contato|default:"Anônimo" }}
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-clock"></i>
-                            {{ denuncia.dias_em_aberto }} dias em aberto
-                        </div>
-                    </div>
-                    
-                    <div class="denuncia-descricao">
-                        {{ denuncia.descricao|truncatewords:15 }}
-                    </div>
-                    
-                    <div class="denuncia-actions">
-                        <button class="btn btn-primary" onclick="event.stopPropagation(); aceitarDenuncia('{{ denuncia.protocolo }}')">
-                            <i class="fas fa-check"></i>Aceitar
-                        </button>
-                        <a class="btn btn-primary" href="{% url 'tecnico:denuncia_detail' denuncia.protocolo %}">
-                            <i class="fas fa-eye"></i>Detalhes
-                        </a>
-                    </div>
-                </div>                        
-            {% empty %}
-                <p style="padding: 20px; text-align: center; color: var(--gray);">Nenhuma denúncia aguardando atribuição. Bom trabalho!</p>
-            {% endfor %}
-        </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fas fa-inbox"></i>
+        Denúncias Não Atribuídas
+      </div>
+      <span class="badge badge-primary">{{ denuncias|length }} novas</span>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">
-                <i class="fas fa-tasks"></i>
-                Minhas Denúncias em Andamento
+    <div class="denuncia-list">
+      {% for denuncia in denuncias %}
+      <div class="denuncia-item" onclick="openDenunciaModal('{{ denuncia.protocolo }}')">
+        <div class="denuncia-header">
+          <div class="denuncia-protocolo" style="font-size: 22px">{{ denuncia.protocolo }}</div>
+          <div class="denuncia-prioridade prioridade-{{ denuncia.prioridade|lower }}" style="font-size: 14px">
+            {{ denuncia.get_prioridade_display }}
+          </div>
+        </div>
+        <div class="denuncia-titulo" style="font-size: 18px">{{ denuncia.titulo }}</div>
+        <br />
+        <div class="denuncia-info">
+          <div class="info-item">
+            <i class="fas fa-road"></i>
+            {{ denuncia.categoria.nome }}
+          </div>
+          <div class="info-item">
+            <i class="fas fa-calendar"></i>
+            {{ denuncia.data_criacao|date:"d/m/Y H:i" }}
+          </div>
+          <div class="info-item">
+            <i class="fas fa-user"></i>
+            {{ denuncia.contato|default:"Anônimo" }}
+          </div>
+          <div class="info-item">
+            <i class="fas fa-clock"></i>
+            {{ denuncia.dias_em_aberto }} dias em aberto
+          </div>
+        </div>
+        <div class="denuncia-descricao">
+          {{ denuncia.descricao|truncatewords:15 }}
+        </div>
+        <div class="denuncia-actions">
+          <button class="btn btn-success" onclick="event.stopPropagation(); aceitarDenuncia('{{ denuncia.protocolo }}')">
+            <i class="fas fa-check"></i>Aceitar
+          </button>
+          <a class="btn btn-primary" href="{% url 'tecnico:denuncia_detail' denuncia.protocolo %}" style="text-decoration: none;">
+            <i class="fas fa-eye"></i>Detalhes
+          </a>
+        </div>
+      </div>
+      {% empty %}
+      <p style="padding: 20px; text-align: center; color: var(--gray)">
+        Nenhuma denúncia aguardando atribuição. Bom trabalho!
+      </p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="fas fa-tasks"></i>
+            Minhas Denúncias em Andamento
+        </div>
+        <span class="badge badge-warning">{{ denuncia_user|length }} pendentes</span>
+    </div>
+
+    <div class="denuncia-list">
+        {% for user in denuncia_user %}
+        <div class="denuncia-item">
+            <div class="denuncia-header">
+                <div class="denuncia-protocolo">{{ user.protocolo }}</div>
+                <div class="denuncia-prioridade prioridade-{{ user.prioridade|lower }}">{{ user.get_prioridade_display }}</div>
             </div>
-            <span class="badge badge-warning">3 pendentes</span>
-        </div>
-        
-        <div class="filters">
-            <select class="filter-select">
-                <option>Status: Todos</option>
-                <option>Em Análise</option>
-                <option>Em Andamento</option>
-                <option>Aguardando Peças</option>
-            </select>
-        </div>
-        
-        <div class="denuncia-list">
-            <div class="denuncia-item" onclick="openDenunciaModal('DEN-C3D5E7F9')">
-                <div class="denuncia-header">
-                    <div class="denuncia-protocolo">DEN-C3D5E7F9</div>
-                    <div class="denuncia-prioridade prioridade-alta">URGENTE</div>
+            <div class="denuncia-titulo">{{ user.titulo }}</div>
+            <br />
+            <div class="denuncia-info">
+                <div class="info-item">
+                    <i class="fas fa-tint"></i>
+                    {{ user.categoria.nome }}
                 </div>
-                <div class="denuncia-titulo">Vazamento de Água na Rua Secundária</div>
-                <div class="denuncia-info">
-                    <div class="info-item">
-                        <i class="fas fa-tint"></i>
-                        Saneamento
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar"></i>
-                        Atribuída: Hoje
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Vila Nova
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-clock"></i>
-                        Prazo: 2 dias
-                    </div>
+                <div class="info-item">
+                    <i class="fas fa-calendar"></i>
+                    Atribuída: {{ user.data_atribuicao|date:"d/m/Y H:i" }}
                 </div>
-                <div class="denuncia-descricao">
-                    Vazamento em tubulação de água, causando alagamento na via. Necessária intervenção urgente...
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ user.endereco }}
                 </div>
-                <div class="denuncia-actions">
-                    <button class="btn btn-success" onclick="event.stopPropagation(); atualizarStatus('DEN-C3D5E7F9')">
-                        <i class="fas fa-edit"></i>Atualizar
-                    </button>
-                    <button class="btn btn-outline" onclick="event.stopPropagation(); visualizarDetalhes('DEN-C3D5E7F9')">
-                        <i class="fas fa-eye"></i>Detalhes
-                    </button>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    Prazo: {{ user.prazo_dias }} dias
                 </div>
             </div>
+            <div class="denuncia-descricao">
+                {{ user.descricao|truncatewords:20 }}
+            </div>
+            <div class="denuncia-actions">
+                <button class="btn btn-success" onclick="event.stopPropagation();">
+                    <i class="fas fa-edit"></i>Atualizar
+                </button>
+                <a href="{% url 'tecnico:denuncia_detail' denuncia.protocolo %}" class="btn btn-outline" onclick="event.stopPropagation();">
+                    <i class="fas fa-eye"></i>Detalhes
+                </a>
+            </div>
         </div>
+        {% empty %}
+        <p style="padding: 20px; text-align: center; color: var(--gray)">
+            Nenhuma denúncia em andamento.
+        </p>
+        {% endfor %}
     </div>
 </div>
+
+{% block javascript %}
+<script>
+  csrfToken = "{{ csrf_token }}";
+
+  function aceitarDenuncia(protocolo) {
+    const finalUrl =
+      "{% url 'tecnico:aceitar_denuncia' protocolo='0' %}".replace(
+        "0",
+        protocolo
+      );
+
+    fetch(finalUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken,
+      },
+    })
+      .then((response) => {
+        if (response.ok) return response.json();
+        throw new Error("Falha na requisição. Status: " + response.status);
+      })
+      .then((data) => {
+        if (data.success) {
+          alert("Denúncia aceita com sucesso!");
+          window.location.reload();
+        } else {
+          // Exibe uma mensagem mais detalhada
+          alert("Erro: " + data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Erro no fetch:", error);
+        alert("Ocorreu um erro de comunicação: " + error.message);
+      });
+  }
+</script>
+
+{% endblock javascript %}
 {% endblock content %}
