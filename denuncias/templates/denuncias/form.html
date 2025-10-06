@@ -1,506 +1,523 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Denúncias Anônimas</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #3498db, #2c3e50);
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        
+      /* ... Seu CSS ... */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      
+      body {
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+      
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #3498db, #2ecc71, #e74c3c, #f39c12);
+      }
+      
+      header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+      
+      .logo i {
+        font-size: 36px;
+        color: #3498db;
+      }
+      
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 32px;
+        font-weight: 700;
+      }
+      
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 16px;
+        margin-bottom: 30px;
+        line-height: 1.5;
+      }
+      
+      .features {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      
+      .feature {
+        flex: 1;
+        min-width: 180px;
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .feature:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      .feature-number {
+        display: inline-block;
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        border-radius: 50%;
+        line-height: 35px;
+        margin-bottom: 12px;
+        font-weight: bold;
+        font-size: 16px;
+      }
+      
+      .feature-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #2c3e50;
+        font-size: 16px;
+      }
+      
+      .feature-description {
+        font-size: 13px;
+        color: #7f8c8d;
+        line-height: 1.4;
+      }
+      
+      .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+        margin: 30px 0;
+      }
+      
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      h2 i {
+        color: #3498db;
+      }
+      
+      .form-intro {
+        color: #7f8c8d;
+        margin-bottom: 25px;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      
+      .form-group {
+        margin-bottom: 25px;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 14px;
+      }
+      
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 14px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+      }
+      
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        transform: translateY(-2px);
+      }
+      
+      .example {
+        color: #95a5a6;
+        font-size: 13px;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      
+      textarea {
+        height: 140px;
+        resize: vertical;
+        line-height: 1.5;
+      }
+      
+      .required::after {
+        content: ' *';
+        color: #e74c3c;
+      }
+      
+      .file-upload {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+      }
+      
+      .file-upload-btn {
+        background: #f8f9fa;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+      
+      .file-upload-btn:hover {
+        border-color: #3498db;
+        background: #e3f2fd;
+      }
+      
+      .file-upload-btn i {
+        font-size: 24px;
+        color: #7f8c8d;
+        margin-bottom: 8px;
+      }
+      
+      .file-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+      
+      .file-name {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #3498db;
+        font-weight: 500;
+      }
+      
+      .submit-btn {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        border: none;
+        padding: 16px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+      }
+      
+      .privacy-notice {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+        border-left: 4px solid #3498db;
+      }
+      
+      .privacy-notice h3 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+      }
+      
+      .privacy-notice p {
+        color: #7f8c8d;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .contact-info {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+      }
+      
+      .contact-info p {
+        color: #7f8c8d;
+        font-size: 14px;
+      }
+      
+      .contact-info strong {
+        color: #2c3e50;
+      }
+      
+      .back-button {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        background: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+      
+      .back-button:hover {
+        transform: translateX(-5px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        background: var(--light);
+      }
+      
+      .back-button i {
+        font-size: 20px;
+        color: var(--primary);
+      }
+      
+      @media (max-width: 768px) {
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-            padding: 40px;
-            position: relative;
-            overflow: hidden;
+          padding: 25px;
         }
-        
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #3498db, #2ecc71, #e74c3c, #f39c12);
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .logo i {
-            font-size: 36px;
-            color: #3498db;
-        }
-        
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 32px;
-            font-weight: 700;
-        }
-        
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 16px;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-        
+      
         .features {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            gap: 15px;
+          flex-direction: column;
         }
-        
+      
         .feature {
-            flex: 1;
-            min-width: 180px;
-            text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+          margin-bottom: 15px;
         }
-        
-        .feature:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      
+        h1 {
+          font-size: 28px;
         }
-        
-        .feature-number {
-            display: inline-block;
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border-radius: 50%;
-            line-height: 35px;
-            margin-bottom: 12px;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #2c3e50;
-            font-size: 16px;
-        }
-        
-        .feature-description {
-            font-size: 13px;
-            color: #7f8c8d;
-            line-height: 1.4;
-        }
-        
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
-            margin: 30px 0;
-        }
-        
+      
         h2 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+          font-size: 22px;
         }
-        
-        h2 i {
-            color: #3498db;
+      }
+      
+      /* Animações */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-        
-        .form-intro {
-            color: #7f8c8d;
-            margin-bottom: 25px;
-            font-size: 15px;
-            line-height: 1.5;
+      
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 14px;
-        }
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .example {
-            color: #95a5a6;
-            font-size: 13px;
-            margin-top: 6px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        textarea {
-            height: 140px;
-            resize: vertical;
-            line-height: 1.5;
-        }
-        
-        .required::after {
-            content: " *";
-            color: #e74c3c;
-        }
-        
-        .file-upload {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-        
-        .file-upload-btn {
-            background: #f8f9fa;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-        
-        .file-upload-btn:hover {
-            border-color: #3498db;
-            background: #e3f2fd;
-        }
-        
-        .file-upload-btn i {
-            font-size: 24px;
-            color: #7f8c8d;
-            margin-bottom: 8px;
-        }
-        
-        .file-input {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-        
-        .file-name {
-            margin-top: 8px;
-            font-size: 13px;
-            color: #3498db;
-            font-weight: 500;
-        }
-        
-        .submit-btn {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 16px 30px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-        }
-        
-        .privacy-notice {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 30px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .privacy-notice h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-        }
-        
-        .privacy-notice p {
-            color: #7f8c8d;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .contact-info {
-            text-align: center;
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
-        }
-        
-        .contact-info p {
-            color: #7f8c8d;
-            font-size: 14px;
-        }
-        
-        .contact-info strong {
-            color: #2c3e50;
-        }
-
-        .back-button {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            background: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .back-button:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            background: var(--light);
-        }
-
-        .back-button i {
-            font-size: 20px;
-            color: var(--primary);
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 25px;
-            }
-            
-            .features {
-                flex-direction: column;
-            }
-            
-            .feature {
-                margin-bottom: 15px;
-            }
-            
-            h1 {
-                font-size: 28px;
-            }
-            
-            h2 {
-                font-size: 22px;
-            }
-        }
-        
-        /* Animações */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .container {
-            animation: fadeIn 0.6s ease-out;
-        }
-        
-        .feature {
-            animation: fadeIn 0.6s ease-out;
-        }
-        
-        .feature:nth-child(1) { animation-delay: 0.1s; }
-        .feature:nth-child(2) { animation-delay: 0.2s; }
-        .feature:nth-child(3) { animation-delay: 0.3s; }
-
-        .back-button {
-            animation: fadeInUp 0.6s ease-out 0.2s both;
-        }
+      }
+      
+      .container {
+        animation: fadeIn 0.6s ease-out;
+      }
+      
+      .feature {
+        animation: fadeIn 0.6s ease-out;
+      }
+      
+      .feature:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      
+      .feature:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      
+      .feature:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      
+      .back-button {
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+      }
     </style>
-</head>
-<body>
+  </head>
 
-    
-    <button class="back-button" onclick="history.back()" title="Voltar">
-        <i class="fas fa-arrow-left"></i>
-    </button>
+  <body>
+    <button class="back-button" onclick="history.back()" title="Voltar"><i class="fas fa-arrow-lef"></i></button>
 
     <div class="container">
+      <header>
+        <div class="logo">
+          <i class="fas fa-shield-alt"></i>
+          <h1>Registrar Denúncia</h1>
+        </div>
+        <p class="subtitle">Reporte problemas no seu bairro de forma segura e anônima. Receba um protocolo para acompanhamento.</p>
+      </header>
 
+      <div class="divider"></div>
 
-        <header>
-            <div class="logo">
-                <i class="fas fa-shield-alt"></i>
-                <h1>Registrar Denúncia</h1>
+      <section>
+        <p class="form-intro">Preencha os dados abaixo para registrar sua denúncia anônima. Campos marcados com * são obrigatórios.</p>
+
+        <form id="denunciaForm" method="post" action="{% url 'denuncias:denuncia-create' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="titulo" class="required">Título da Denúncia</label>
+            <input type="text" id="titulo" name="titulo" placeholder="Ex: Buraco na Rua Principal" required />
+            <p class="example">
+              <i class="fas fa-info-circle"></i> Seja claro e objetivo no título
+            </p>
+          </div>
+
+          <div class="form-group">
+            {{ form.categoria.label_tag }}
+            {{ form.categoria }}
+            {{ form.categoria.errors }}
+            <p class="example">
+              <i class="fas fa-info-circle"></i> Selecione a categoria que melhor descreve o problema
+            </p>
+          </div>
+
+          <div class="form-group">
+            {{ form.localizacao.label_tag }}
+            {{ form.localizacao }}
+            {{ form.localizacao.errors }}
+            <p class="example">
+              <i class="fas fa-info-circle"></i> Informe o endereço exato ou ponto de referência
+            </p>
+          </div>
+
+          <div class="form-group">
+            {{ form.ponto_referencia.label_tag }} {{ form.ponto_referencia }} {{ form.ponto_referencia.errors }}
+            <p class="example">
+              <i class="fas fa-info-circle"></i> Ajude a equipe a localizar o problema mais facilmente
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="contato">Contato (opcional)</label>
+            <input type="text" id="contato" name="contato" placeholder="Telefone ou E-mail para retorno" />
+            <p class="example">
+              <i class="fas fa-info-circle"></i> Se desejar ser contactado sobre o andamento
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="descricao" class="required">Descrição Detalhada</label>
+            <textarea id="descricao" name="descricao" placeholder="Descreva o problema em detalhes: tamanho, gravidade, há quanto tempo existe, riscos envolvidos..." required></textarea>
+            <p class="example">
+              <i class="fas fa-info-circle"></i> Quanto mais detalhes, melhor para nossa equipe
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="foto">Foto do Problema (opcional)</label>
+            <div class="file-upload">
+              <div class="file-upload-btn">
+                <i class="fas fa-camera"></i>
+                <div>Clique para adicionar uma foto</div>
+                <div style="font-size: 12px; margin-top: 5px; color: #95a5a6;">Formatos: JPG, PNG, GIF (Máx. 5MB)</div>
+              </div>
+              <input type="file" id="foto" name="foto" class="file-input" accept="image/jpeg,image/png,image/gif" />
             </div>
-            <p class="subtitle">Reporte problemas no seu bairro de forma segura e anônima. Receba um protocolo para acompanhamento.</p>
-        </header>
-        
-        <div class="divider"></div>
-        
-        <section>
+            <div class="file-name" id="fileName"></div>
+          </div>
 
-            <p class="form-intro">Preencha os dados abaixo para registrar sua denúncia anônima. Campos marcados com * são obrigatórios.</p>
-            
-            <form id="denunciaForm" method="post" action="{% url 'denuncias:denuncia-create' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="titulo" class="required">Título da Denúncia</label>
-                    <input type="text" id="titulo" name="titulo" placeholder="Ex: Buraco na Rua Principal" required>
-                    <p class="example"><i class="fas fa-info-circle"></i> Seja claro e objetivo no título</p>
-                </div>
-                
-                <div class="form-group">
-                    {{ form.categoria.label_tag }}
-                    {{ form.categoria }}
-                    {{ form.categoria.errors }} 
-                    <p class="example"><i class="fas fa-info-circle"></i> Selecione a categoria que melhor descreve o problema</p>
-                </div>
-                
-                <div class="form-group">
-                    {{ form.localizacao.label_tag }}    
-                    {{ form.localizacao }}     
-                    {{ form.localizacao.errors }} 
-                    <p class="example"><i class="fas fa-info-circle"></i> Informe o endereço exato ou ponto de referência</p>
-                </div>
+          <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Enviar Denúncia</button>
+        </form>
 
-                <div class="form-group">
-                    {{ form.ponto_referencia.label_tag }} <!-- Corrigir o nome do campo -->
-                    {{ form.ponto_referencia }}           <!-- Corrigir o nome do campo -->
-                    {{ form.ponto_referencia.errors }} 
-                    <p class="example"><i class="fas fa-info-circle"></i> Ajude a equipe a localizar o problema mais facilmente</p>
-                </div>
-
-                <div class="form-group">
-                    <label for="contato">Contato (opcional)</label>
-                    <input type="text" id="contato" name="contato" placeholder="Telefone ou E-mail para retorno">
-                    <p class="example"><i class="fas fa-info-circle"></i> Se desejar ser contactado sobre o andamento</p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="descricao" class="required">Descrição Detalhada</label>
-                    <textarea id="descricao" name="descricao" placeholder="Descreva o problema em detalhes: tamanho, gravidade, há quanto tempo existe, riscos envolvidos..." required></textarea>
-                    <p class="example"><i class="fas fa-info-circle"></i> Quanto mais detalhes, melhor para nossa equipe</p>
-                </div>
-
-                <div class="form-group">
-                    <label for="foto">Foto do Problema (opcional)</label>
-                    <div class="file-upload">
-                        <div class="file-upload-btn">
-                            <i class="fas fa-camera"></i>
-                            <div>Clique para adicionar uma foto</div>
-                            <div style="font-size: 12px; margin-top: 5px; color: #95a5a6;">
-                                Formatos: JPG, PNG, GIF (Máx. 5MB)
-                            </div>
-                        </div>
-                        <input type="file" id="foto" name="foto" class="file-input" accept="image/jpeg,image/png,image/gif">
-                    </div>
-                    <div class="file-name" id="fileName"></div>
-                </div>
-                
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-paper-plane"></i> Enviar Denúncia
-                </button>
-            </form>
-
-            <div class="privacy-notice">
-                <h3><i class="fas fa-lock"></i> Sua Privacidade é Garantida</h3>
-                <p>Todas as denúncias são processadas de forma anônima. Seus dados pessoais não serão compartilhados e o contato é opcional, usado apenas para atualizações sobre o andamento.</p>
-            </div>
-        </section>
-
- 
+        <div class="privacy-notice">
+          <h3><i class="fas fa-lock"></i> Sua Privacidade é Garantida</h3>
+          <p>Todas as denúncias são processadas de forma anônima. Seus dados pessoais não serão compartilhados e o contato é opcional, usado apenas para atualizações sobre o andamento.</p>
+        </div>
+      </section>
     </div>
 
     <footer>
-        <p style="text-align: center; margin-top: 25px; color: whitesmoke;">Sistema de Denúncias Anônimas &copy; 2023 - Todos os direitos reservados</p>
+      <p style="text-align: center; margin-top: 25px; color: whitesmoke;">Sistema de Denúncias Anônimas &copy; 2025 - Todos os direitos reservados</p>
     </footer>
 
-
     <script>
-        // Mostrar nome do arquivo selecionado
-        document.getElementById('foto').addEventListener('change', function(e) {
-            const fileName = document.getElementById('fileName');
-            if (this.files.length > 0) {
-                fileName.textContent = 'Arquivo selecionado: ' + this.files[0].name;
-            } else {
-                fileName.textContent = '';
-            }
-        });
-
-        // Validação do formulário
-
-        // Efeito de foco suave nos campos
-        const inputs = document.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'translateY(-2px)';
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'translateY(0)';
-            });
-        });
+      // Mostrar nome do arquivo selecionado
+      document.getElementById('foto').addEventListener('change', function (e) {
+        const fileName = document.getElementById('fileName')
+        if (this.files.length > 0) {
+          fileName.textContent = 'Arquivo selecionado: ' + this.files[0].name
+        } else {
+          fileName.textContent = ''
+        }
+      })
+      
+      // Validação do formulário
+      
+      // Efeito de foco suave nos campos
+      const inputs = document.querySelectorAll('input, select, textarea')
+      inputs.forEach((input) => {
+        input.addEventListener('focus', function () {
+          this.parentElement.style.transform = 'translateY(-2px)'
+        })
+      
+        input.addEventListener('blur', function () {
+          this.parentElement.style.transform = 'translateY(0)'
+        })
+      })
     </script>
-</body>
+  </body>
 </html>

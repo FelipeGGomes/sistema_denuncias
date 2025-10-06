@@ -1,0 +1,66 @@
+    {# ADICIONE ESTAS LINHAS PARA DEPURAÇÃO #}
+    <div style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <h3>Informações de Depuração:</h3>
+        <p>Usuário Logado (request.user): <strong>{{ request.user.username }}</strong></p>
+        <p>ID do Usuário: <strong>{{ request.user.id }}</strong></p>
+    </div>
+    {# FIM DAS LINHAS DE DEPURAÇÃO #}
+
+
+
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="fas fa-tasks"></i>
+            Minhas Denúncias em Andamento
+        </div>
+        <span class="badge badge-warning">{{ minhas_denuncias|length }} pendentes</span>
+    </div>
+
+    <div class="denuncia-list">
+        {% for denuncia in minhas_denuncias %}
+        <div class="denuncia-item">
+            <div class="denuncia-header">
+                <div class="denuncia-protocolo">{{ denuncia.protocolo }}</div>
+                <div class="denuncia-prioridade prioridade-{{ denuncia.prioridade|lower }}">{{ denuncia.get_prioridade_display }}</div>
+            </div>
+            <div class="denuncia-titulo">{{ denuncia.titulo }}</div>
+            <br />
+            <div class="denuncia-info">
+                <div class="info-item">
+                    <i class="fas fa-tint"></i>
+                    {{ denuncia.categoria.nome }}
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-calendar"></i>
+                    Atribuída: {{ denuncia.data_atribuicao|date:"d/m/Y H:i" }}
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ denuncia.endereco }}
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    Prazo: {{ denuncia.prazo_dias }} dias
+                </div>
+            </div>
+            <div class="denuncia-descricao">
+                {{ denuncia.descricao|truncatewords:20 }}
+            </div>
+            <div class="denuncia-actions">
+                <button class="btn btn-success" onclick="event.stopPropagation();">
+                    <i class="fas fa-edit"></i>Atualizar
+                </button>
+                <a href="{% url 'tecnico:denuncia_detail' denuncia.protocolo %}" class="btn btn-outline" onclick="event.stopPropagation();">
+                    <i class="fas fa-eye"></i>Detalhes
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <p style="padding: 20px; text-align: center; color: var(--gray)">
+            Nenhuma denúncia em andamento.
+        </p>
+        {% endfor %}
+    </div>
+</div>

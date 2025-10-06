@@ -18,11 +18,16 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
      # Inclui as URLs na raiz do site
+    path('', include('denuncias.urls')),
     path('admin/', admin.site.urls),
-    path('', include('denuncias.urls')), # Inclui as URLs na raiz do site
-    path('', include('tecnico.urls')), # Inclui as URLs do app tecnico
+    path('tecnico/', include('tecnico.urls')),
+    path('auth/', include('authentication.urls')),
 ] 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

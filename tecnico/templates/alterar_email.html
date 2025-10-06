@@ -1,0 +1,98 @@
+{% extends 'tecnico/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <!-- Cabeçalho -->
+            <div class="header-section mb-4">
+                <h1 class="page-title mb-0">Alterar E-mail</h1>
+                <p class="text-muted">Atualize seu endereço de e-mail</p>
+            </div>
+
+            <br>
+
+            <!-- Card de Alteração de E-mail -->
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-envelope me-2"></i>Alteração de E-mail
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <!-- E-mail Atual -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-primary">E-mail Atual</label>
+                            <div class="current-email p-3 bg-light rounded">
+                                <span>{{ user.email }}</span>
+                            </div>
+                        </div>
+                        <br>
+
+                        <!-- Novo E-mail -->
+                        <div class="mb-3">
+                            <label for="{{ form.novo_email.id_for_label }}" class="form-label fw-bold">
+                                {{ form.novo_email.label }}
+                            </label>
+                            {{ form.novo_email }}
+                            {% if form.novo_email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.novo_email.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if form.novo_email.help_text %}
+                            <div class="form-text">{{ form.novo_email.help_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+input {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    margin-bottom: 10px;
+
+}
+
+.current-email {
+    margin-top: 10px;
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    border-left: 4px solid #0d6efd;
+
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+}
+
+.list-unstyled li {
+    padding: 5px 0;
+}
+</style>
+{% endblock %}

@@ -120,7 +120,7 @@ class Denuncia(models.Model):
     
     # Mídia - MELHORIAS NA IMAGEM
     foto = models.ImageField(
-        upload_to='denuncias/%Y/%m/%d/', 
+        upload_to='denuncias/', 
         blank=True, 
         null=True,
         verbose_name="Foto do Problema",
@@ -165,6 +165,15 @@ class Denuncia(models.Model):
         null=True,
         verbose_name="Observações Internas",
         help_text="Observações para uso da equipe administrativa"
+    )
+    
+    tecnico = models.ForeignKey(
+    'auth.User', 
+    null=True, 
+    blank=True, 
+    on_delete=models.SET_NULL, 
+    related_name='denuncias_atribuidas',
+    verbose_name="Técnico Responsável"
     )
 
     class Meta:
@@ -230,12 +239,12 @@ class Denuncia(models.Model):
 
 class LogDenuncia(models.Model):
     TIPO_ACAO_CHOICES = [
-        ('CRIACAO', 'Criação'),
-        ('ATUALIZACAO', 'Atualização'),
-        ('STATUS', 'Alteração de Status'),
-        ('PRIORIDADE', 'Alteração de Prioridade'),
-        ('RESOLUCAO', 'Resolução'),
-        ('COMENTARIO', 'Comentário'),
+        ('NÃO_ATRIBUIDO', 'Aguardando Atribuição'),
+        ('RECEBIDA', 'Recebida'),
+        ('EM_ANALISE', 'Em Análise'),
+        ('EM_ANDAMENTO', 'Em Andamento'),
+        ('RESOLVIDA', 'Resolvida'),
+        ('ARQUIVADA', 'Arquivada'),
     ]
 
     denuncia = models.ForeignKey(

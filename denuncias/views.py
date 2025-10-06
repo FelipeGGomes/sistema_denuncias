@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from .forms import DenunciaForm, DenunciaSearchForm, AdminDenunciaUpdateForm
-from .models import Denuncia, Categoria
+from .models import Denuncia, Categoria, LogDenuncia
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 import json
@@ -17,18 +17,22 @@ from .forms import DenunciaForm
 
 def denuncia_create_view(request):
     if request.method == "POST":
-        form = DenunciaForm(request.POST, request.FILES)  # Recebe tanto os dados quanto o arquivo
+        form = DenunciaForm(request.POST, request.FILES) 
         if form.is_valid():
+            print("--- DADOS LIMPOS DO FORMULÁRIO ---")
+            print(form.cleaned_data.get('foto'))
+            print("----------------------------------")
             denuncia = form.save()
-            print(f"Denúncia salva com sucesso: {denuncia.protocolo}")# Salva os dados no banco
-            protocolo = denuncia.protocolo  # Pega o protocolo da denúncia
-            return redirect('denuncias:denuncia-success', protocolo=protocolo)  # Redireciona para a página de sucesso
+            print(f"Denúncia salva com sucesso: {denuncia.protocolo}")
+            print(f"FILES RECEBIDOS: {request.FILES}")
+            protocolo = denuncia.protocolo 
+            return redirect('denuncias:denuncia-success', protocolo=protocolo) 
+
         else:
-            print(f"Erro ao salvar denúncia: {form.errors}")
-            # Caso o formulário não seja válido, renderiza o formulário novamente com erros
+            print(f"Erro ao salvar denúncia: {form.errors}")            
             return render(request, 'denuncias/form.html', {'form': form})
     else:
-        form = DenunciaForm()  # Se não for um POST, renderiza o formulário vazio
+        form = DenunciaForm() 
 
     return render(request, 'denuncias/form.html', {'form': form})
 def denuncia_success_view(request, protocolo):
@@ -39,7 +43,7 @@ def denuncia_search_view(request):
     if request.method == 'POST' and form.is_valid():
         protocolo = form.cleaned_data['protocolo']
         if Denuncia.objects.filter(protocolo=protocolo).exists():
-            # CORREÇÃO AQUI: Passa o argumento nomeado 'protocolo'
+            
             return redirect('denuncias:denuncia-detail', protocolo=protocolo) 
         else:
             form.add_error('protocolo', 'Protocolo não encontrado.')
@@ -47,7 +51,9 @@ def denuncia_search_view(request):
     return render(request, 'denuncias/search.html', {'form': form})
 def denuncia_detail_view(request, protocolo):
     denuncia = get_object_or_404(Denuncia, protocolo=protocolo)
-    return render(request, 'denuncias/detail.html', {'denuncia': denuncia})
+    logs = LogDenuncia.objects.filter(denuncia=denuncia)
+    
+    return render(request, 'denuncias/detail.html', {'denuncia': denuncia, 'logs': logs})
 
 # --- Views Administrativas ---
 @staff_member_required
