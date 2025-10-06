@@ -54,9 +54,9 @@
                 Denúncias Atribuídas
             </div>
             <div class="header-actions">
-                <span class="badge badge-primary">{{ minhas_denuncias.paginator.count }} atendimentos</span>
-                <span class="pagination-info">
-                    Mostrando {{ minhas_denuncias.start_index }} - {{ minhas_denuncias.end_index }} de {{ minhas_denuncias.paginator.count }}
+                <span class="badge badge-primary" id="totalCount">{{ minhas_denuncias.paginator.count }} atendimentos</span>
+                <span class="pagination-info" id="paginationInfo">
+                    Mostrando <span id="startIndex">1</span> - <span id="endIndex">10</span> de <span id="totalItems">{{ minhas_denuncias.paginator.count }}</span>
                 </span>
             </div>
         </div>
@@ -89,7 +89,7 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="denunciasTableBody">
                     {% for denuncia in minhas_denuncias %}
                     <tr class="denuncia-row" 
                         data-status="{{ denuncia.status }}" 
@@ -156,7 +156,7 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
+                    <tr id="emptyStateRow">
                         <td colspan="8">
                             <div class="empty-state">
                                 <i class="fas fa-inbox"></i>
@@ -170,48 +170,23 @@
             </table>
         </div>
 
-        <!-- Paginação -->
-        {% if minhas_denuncias.has_other_pages %}
-        <div class="pagination-container">
-            <div class="pagination-info-mobile">
-                Página {{ minhas_denuncias.number }} de {{ minhas_denuncias.paginator.num_pages }}
+        <!-- Paginação JS -->
+        <div class="pagination-container" id="jsPaginationContainer">
+            <div class="pagination-info-mobile" id="paginationInfoMobile">
+                Página <span id="currentPageMobile">1</span> de <span id="totalPagesMobile">1</span>
             </div>
-            <div class="pagination">
-                {% if minhas_denuncias.has_previous %}
-                    <a href="?page=1{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link" title="Primeira página">
-                        <i class="fas fa-angle-double-left"></i>
-                    </a>
-                    <a href="?page={{ minhas_denuncias.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link" title="Página anterior">
-                        <i class="fas fa-angle-left"></i>
-                    </a>
-                {% endif %}
-
-                {% for num in minhas_denuncias.paginator.page_range %}
-                    {% if minhas_denuncias.number == num %}
-                        <span class="page-link current">{{ num }}</span>
-                    {% elif num > minhas_denuncias.number|add:'-3' and num < minhas_denuncias.number|add:'3' %}
-                        <a href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link">{{ num }}</a>
-                    {% endif %}
-                {% endfor %}
-
-                {% if minhas_denuncias.has_next %}
-                    <a href="?page={{ minhas_denuncias.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link" title="Próxima página">
-                        <i class="fas fa-angle-right"></i>
-                    </a>
-                    <a href="?page={{ minhas_denuncias.paginator.num_pages }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}" class="page-link" title="Última página">
-                        <i class="fas fa-angle-double-right"></i>
-                    </a>
-                {% endif %}
+            <div class="pagination" id="jsPagination">
+                <!-- A paginação será gerada via JavaScript -->
             </div>
-            <div class="pagination-stats">
-                {{ minhas_denuncias.start_index }} - {{ minhas_denuncias.end_index }} de {{ minhas_denuncias.paginator.count }}
+            <div class="pagination-stats" id="paginationStats">
+                <span id="startIndexStats">1</span> - <span id="endIndexStats">10</span> de <span id="totalItemsStats">{{ minhas_denuncias.paginator.count }}</span>
             </div>
         </div>
-        {% endif %}
     </div>
 </div>
 
 <style>
+    /* [Mantém todos os estilos CSS anteriores] */
     /* Container da tabela */
     .table-container {
         overflow-x: auto;
@@ -453,6 +428,7 @@
         align-items: center;
         justify-content: center;
         min-width: 40px;
+        cursor: pointer;
     }
 
     .page-link:hover {
@@ -464,6 +440,16 @@
         background: var(--primary);
         color: white;
         border-color: var(--primary);
+    }
+
+    .page-link.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .page-link.disabled:hover {
+        background: transparent;
+        color: var(--secondary);
     }
 
     .pagination-info {
@@ -598,16 +584,148 @@
 </style>
 
 <script>
-    // Variáveis de ordenação
-    let currentSort = '{{ request.GET.sort|default:"data_atualizacao" }}';
-    let currentOrder = '{{ request.GET.order|default:"desc" }}';
+    // Variáveis de paginação
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let allDenuncias = [];
+    let filteredDenuncias = [];
 
-    // Inicializar ícones de ordenação
+    // Inicialização
     document.addEventListener('DOMContentLoaded', function() {
+        initializePagination();
         updateSortIcons();
     });
 
-    // Filtros e Busca
+    // Inicializar paginação
+    function initializePagination() {
+        // Coletar todas as denúncias da tabela
+        allDenuncias = Array.from(document.querySelectorAll('.denuncia-row'));
+        
+        // Remover a linha de estado vazio se houver denúncias
+        const emptyStateRow = document.getElementById('emptyStateRow');
+        if (allDenuncias.length > 0 && emptyStateRow) {
+            emptyStateRow.remove();
+        }
+        
+        filteredDenuncias = [...allDenuncias];
+        
+        // Esconder a paginação do Django
+        const djangoPagination = document.querySelector('.pagination-container:not(#jsPaginationContainer)');
+        if (djangoPagination) {
+            djangoPagination.style.display = 'none';
+        }
+        
+        // Aplicar paginação inicial
+        applyPagination();
+    }
+
+    // Aplicar paginação
+    function applyPagination() {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentItems = filteredDenuncias.slice(startIndex, endIndex);
+        
+        // Esconder todas as linhas
+        allDenuncias.forEach(row => row.style.display = 'none');
+        
+        // Mostrar apenas as linhas da página atual
+        currentItems.forEach(row => row.style.display = '');
+        
+        // Atualizar informações de paginação
+        updatePaginationInfo();
+        
+        // Gerar controles de paginação
+        generatePaginationControls();
+    }
+
+    // Atualizar informações de paginação
+    function updatePaginationInfo() {
+        const totalItems = filteredDenuncias.length;
+        const startIndex = (currentPage - 1) * itemsPerPage + 1;
+        const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        // Atualizar elementos de informação
+        document.getElementById('totalCount').textContent = totalItems + ' atendimentos';
+        document.getElementById('startIndex').textContent = startIndex;
+        document.getElementById('endIndex').textContent = endIndex;
+        document.getElementById('totalItems').textContent = totalItems;
+        document.getElementById('startIndexStats').textContent = startIndex;
+        document.getElementById('endIndexStats').textContent = endIndex;
+        document.getElementById('totalItemsStats').textContent = totalItems;
+        document.getElementById('currentPageMobile').textContent = currentPage;
+        document.getElementById('totalPagesMobile').textContent = totalPages;
+    }
+
+    // Gerar controles de paginação
+    function generatePaginationControls() {
+        const paginationContainer = document.getElementById('jsPagination');
+        const totalItems = filteredDenuncias.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        // Limpar controles existentes
+        paginationContainer.innerHTML = '';
+        
+        if (totalPages <= 1) return;
+        
+        // Botão primeira página
+        const firstPageBtn = createPageLink('<<', 1, currentPage > 1);
+        paginationContainer.appendChild(firstPageBtn);
+        
+        // Botão página anterior
+        const prevPageBtn = createPageLink('<', currentPage - 1, currentPage > 1);
+        paginationContainer.appendChild(prevPageBtn);
+        
+        // Páginas numeradas
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const pageLink = createPageLink(i, i, true, i === currentPage);
+            paginationContainer.appendChild(pageLink);
+        }
+        
+        // Botão próxima página
+        const nextPageBtn = createPageLink('>', currentPage + 1, currentPage < totalPages);
+        paginationContainer.appendChild(nextPageBtn);
+        
+        // Botão última página
+        const lastPageBtn = createPageLink('>>', totalPages, currentPage < totalPages);
+        paginationContainer.appendChild(lastPageBtn);
+    }
+
+    // Criar link de página
+    function createPageLink(text, page, enabled = true, isCurrent = false) {
+        const link = document.createElement('a');
+        link.className = 'page-link';
+        link.textContent = text;
+        
+        if (isCurrent) {
+            link.classList.add('current');
+        }
+        
+        if (!enabled) {
+            link.classList.add('disabled');
+        } else {
+            link.onclick = function() {
+                currentPage = page;
+                applyPagination();
+            };
+        }
+        
+        return link;
+    }
+
+    // Ir para página específica
+    function goToPage(page) {
+        const totalPages = Math.ceil(filteredDenuncias.length / itemsPerPage);
+        if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            applyPagination();
+        }
+    }
+
+    // Filtros e Busca (funções existentes mantidas)
     document.getElementById('searchInput').addEventListener('input', filterDenuncias);
     document.getElementById('statusFilter').addEventListener('change', filterDenuncias);
     document.getElementById('prioridadeFilter').addEventListener('change', filterDenuncias);
@@ -621,10 +739,7 @@
         const dataInicio = document.getElementById('dataInicioFilter').value;
         const dataFim = document.getElementById('dataFimFilter').value;
         
-        const rows = document.querySelectorAll('.denuncia-row');
-        let visibleCount = 0;
-        
-        rows.forEach(row => {
+        filteredDenuncias = allDenuncias.filter(row => {
             const protocolo = row.getAttribute('data-protocolo');
             const titulo = row.getAttribute('data-titulo');
             const endereco = row.getAttribute('data-endereco');
@@ -640,16 +755,12 @@
             const matchesDataInicio = !dataInicio || data >= dataInicio;
             const matchesDataFim = !dataFim || data <= dataFim;
             
-            if (matchesSearch && matchesStatus && matchesPrioridade && matchesDataInicio && matchesDataFim) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-            }
+            return matchesSearch && matchesStatus && matchesPrioridade && matchesDataInicio && matchesDataFim;
         });
 
-        // Atualizar contador
-        document.querySelector('.badge').textContent = visibleCount + ' atendimentos';
+        // Resetar para a primeira página após filtrar
+        currentPage = 1;
+        applyPagination();
     }
 
     function resetFilters() {
@@ -661,25 +772,26 @@
         filterDenuncias();
     }
 
-    // Ordenação
+    // Ordenação (funções existentes mantidas)
+    let currentSort = '{{ request.GET.sort|default:"data_atualizacao" }}';
+    let currentOrder = '{{ request.GET.order|default:"desc" }}';
+
     document.querySelectorAll('.sortable').forEach(header => {
         header.addEventListener('click', function() {
             const sortField = this.getAttribute('data-sort');
             
             if (currentSort === sortField) {
-                // Alternar entre asc e desc
                 currentOrder = currentOrder === 'asc' ? 'desc' : 'asc';
             } else {
-                // Nova coluna, ordem padrão desc
                 currentSort = sortField;
                 currentOrder = 'desc';
             }
             
-            // Redirecionar com parâmetros de ordenação
+            // Redirecionar com parâmetros de ordenação (mantido para compatibilidade)
             const url = new URL(window.location.href);
             url.searchParams.set('sort', currentSort);
             url.searchParams.set('order', currentOrder);
-            url.searchParams.set('page', '1'); // Voltar para primeira página
+            url.searchParams.set('page', '1');
             
             window.location.href = url.toString();
         });
