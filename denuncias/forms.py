@@ -38,9 +38,7 @@ class DenunciaForm(forms.ModelForm):
     
     class Meta:
         model = Denuncia
-        # Incluímos os campos extras (titulo, localizacao) e os campos do modelo (categoria, contato, descricao)
-        # Nota: Não incluímos 'endereco' pois será preenchido pelo 'localizacao' no save().
-        fields = ['titulo', 'categoria', 'localizacao','ponto_referencia', 'contato', 'descricao']
+        fields = ['titulo', 'categoria', 'localizacao','ponto_referencia', 'contato', 'descricao', 'foto']
         
         widgets = {
             'descricao': forms.Textarea(attrs={

@@ -120,7 +120,7 @@ class Denuncia(models.Model):
     
     # Mídia - MELHORIAS NA IMAGEM
     foto = models.ImageField(
-        upload_to='denuncias/%Y/%m/%d/', 
+        upload_to='denuncias/', 
         blank=True, 
         null=True,
         verbose_name="Foto do Problema",
