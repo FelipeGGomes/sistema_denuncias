@@ -39,12 +39,13 @@ TEMPLATES = [
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ffoo6+5k*8uatudr5b@9*6bkd*@s44=kt5t&6*8w99^u7aw+!t'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+
+
+ALLOWED_HOSTS = ['127.0.0.1', 'sistema_denuncias.onrender.com'] 
 
 
 # Application definition
