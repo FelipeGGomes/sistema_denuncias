@@ -161,3 +161,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
+# Pegue a SECRET_KEY da variável de ambiente
+SECRET_KEY = os.environ.get('SECRET_KEY')
+
+# Pegue o valor de DEBUG da variável de ambiente
+# O 'False' no final é o valor padrão se a variável não for encontrada
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+
