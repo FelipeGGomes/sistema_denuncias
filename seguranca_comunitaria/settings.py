@@ -42,14 +42,10 @@ TEMPLATES = [
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 
-<<<<<<< HEAD
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 
-ALLOWED_HOSTS = ['127.0.0.1', 'sistema_denuncias.onrender.com'] 
-=======
-ALLOWED_HOSTS = ['*', 'sistema-denuncias.onrender.com']
->>>>>>> d4274ac4355366e2d6146b82f19d6e78c454a182
+ALLOWED_HOSTS = ['127.0.0.1', 'sistema-denuncias.onrender.com'] 
 
 
 # Application definition
