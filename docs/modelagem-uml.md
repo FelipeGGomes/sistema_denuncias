@@ -21,7 +21,7 @@ Representação dos principais *models* do Django:
 ```bash
 +---------------------+ | Categoria | +---------------------+ | - nome: CharField | | - parent: ForeignKey| +---------------------+ | + str() | +---------------------+ | (parent) | *| +-------V-------------+ | Denuncia | +---------------------+ | - protocolo: CharField (PK) | - descricao: TextField| | - data_criacao: DateTimeField | - status: CharField | | - categoria: ForeignKey(Categoria) +---------------------+ | + save() | | + str() | | + generate_protocol_code() +---------------------+
 ```
-./media/colab/diagrama-classes.png
+![Diagrama de Classes](./docs/assets/diagrama-classes.png)
 
 ## 2.3. Diagrama de Sequência (Registrar Denúncia)
 
