@@ -33,18 +33,17 @@ O **Sistema de Gestão de Denúncias** é uma aplicação web completa desenvolv
 
 Este projeto foi construído inteiramente com o ecossistema Django, aproveitando seu sistema de templates para a renderização do frontend.
 
-* **Linguagem:** Python 3.x
+* **Linguagem:** Python 3.13.5
 * **Framework:** Django
-* **Banco de Dados:** [SQLite (padrão de desenvolvimento), PostgreSQL, MySQL]
+* **Banco de Dados:** [SQLite (padrão de desenvolvimento)]
 * **Frontend:** Django Templates, HTML5, CSS3, JavaScript
-* **Estilização:** [Bootstrap, Tailwind CSS, ou CSS puro]
-* **Outras bibliotecas:** [Ex: Pillow para upload de imagens, etc.]
+* **Estilização:** [Bootstrap e CSS]
 
 ## ✅ Pré-requisitos
 
 Antes de começar, você vai precisar ter instalado em sua máquina:
 * [Git](https://git-scm.com)
-* [Python 3.x](https://www.python.org/) e `pip`
+* [Python 3.13.5](https://www.python.org/) e `pip`
 
 ## ⚙️ Como Executar o Projeto
 
